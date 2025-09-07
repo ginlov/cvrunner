@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["cvrunner"]
+
+[project]
+name = "cvrunner"
+version = "0.1.0"
+description = "A flexible experiment runner for computer vision projects"
+authors = [
+    { name = "Long-Giang Vu", email = "your_email@example.com" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "torch>=2.0",
+    "numpy>=1.22",
+    "tqdm",
+]
+
+[project.urls]
+Homepage = "https://github.com/ginlov/cvrunner"
+Documentation = "https://ginlov.github.io/cvrunner"
+Source = "https://github.com/ginlov/cvrunner"
+Issues = "https://github.com/ginlov/cvrunner/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "flake8",
+    "isort",
+    "mypy",
+]
+
+[project.scripts]
+cvrunner = "cvrunner.cli:main"
