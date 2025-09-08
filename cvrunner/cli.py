@@ -3,15 +3,24 @@ import importlib
 import sys
 import pathlib
 
+from typing import Type
+
 from cvrunner.runner.runner import BaseRunner
 from cvrunner.experiment.experiment import BaseExperiment
 
-def load_experiment_class(exp_path: str):
-    """
-    Load a module from file and return the only class that
-    subclasses BaseExperiment.
-    """
+def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
+    """Load experiment class from experiment file
 
+    Args:
+        exp_path (str): path to exp file
+
+    Raises:
+        FileNotFoundError: if exp_path file does not exist
+        RuntimeError: exp_path file has more than 1 experiment class
+
+    Returns:
+        Type[BaseExperiment]: Experiment class
+    """
     exp_path = pathlib.Path(exp_path).resolve()
     if not exp_path.exists():
         raise FileNotFoundError(f"Experiment file not found: {exp_path}")
@@ -34,6 +43,9 @@ def load_experiment_class(exp_path: str):
     return exp_classes[0]
 
 def main():
+    """
+    Entry point for cvrunner
+    """
     parser = argparse.ArgumentParser(description="Run experiments with cvrunner.")
     parser.add_argument(
         "--exp",
@@ -45,6 +57,6 @@ def main():
 
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
-    runner_cls = exp.runner_cls  # <<-- pick runner defined by experiment
+    runner_cls = exp.runner_cls
     runner: BaseRunner = runner_cls(exp)
     runner.run()

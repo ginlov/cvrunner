@@ -1,32 +1,57 @@
 import torch.distributed as dist
+import torch
 
-def is_dist_avail_and_initialized():
+def is_dist_avail_and_initialized() -> bool:
+    """
+    Check distributed status
+
+    Returns:
+        bool: 
+    """
     return dist.is_available() and dist.is_initialized()
 
 
-def get_rank():
+def get_rank() -> int:
+    """
+    Get current rank
+
+    Returns:
+        int:
+    """
     if not is_dist_avail_and_initialized():
         return 0
     return dist.get_rank()
 
 
-def get_world_size():
+def get_world_size() -> int:
+    """
+    Get worl size
+
+    Returns:
+        int:
+    """
     if not is_dist_avail_and_initialized():
         return 1
     return dist.get_world_size()
 
 
-def is_main_process():
+def is_main_process() -> bool:
+    """
+    Check whether is main process
+
+    Returns:
+        bool:
+    """
     return get_rank() == 0
 
 
-def barrier():
+def barrier() -> None:
     """Synchronize all processes."""
     if is_dist_avail_and_initialized():
         dist.barrier()
 
 
-def all_reduce_tensor(tensor, op=dist.ReduceOp.SUM):
+def all_reduce_tensor(tensor, op=dist.ReduceOp.SUM) -> torch.tensor:
     """
     All-reduce a tensor across processes.
     Default = SUM. Divide by world_size manually if you want an average.

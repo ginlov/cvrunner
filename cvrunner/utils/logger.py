@@ -5,6 +5,11 @@ import sys
 import cvrunner.utils.distributed as dist
 
 class DetrLogger(logging.Logger):
+    """_summary_
+
+    Args:
+        logging (_type_): _description_
+    """
     def __init__(self, name="detr", level=logging.INFO, project="torch-detr",
                  run_name=None, config=None, use_wandb=True):
         super().__init__(name, level)
