@@ -183,18 +183,18 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.run" title="Link to this definition"></a></dt>
-<dd><p>To run experiment. General logic is
-for epoch in range(num_epochs):</p>
+<dd><p>To run experiment. General logic is</p>
+<p>for epoch in range(num_epochs):</p>
 <blockquote>
-<div><p>train_epoch_start()
-train_epoch()
-train_epoch_end()</p>
-<dl class="simple">
-<dt>if val_epoch:</dt><dd><p>val_epoch_start()
-val_epoch()
-val_epoch_end()</p>
-</dd>
-</dl>
+<div><p>train_epoch_start()</p>
+<p>train_epoch()</p>
+<p>train_epoch_end()</p>
+<p>if val_epoch:</p>
+<blockquote>
+<div><p>val_epoch_start()</p>
+<p>val_epoch()</p>
+<p>val_epoch_end()</p>
+</div></blockquote>
 </div></blockquote>
 </dd></dl>
 
