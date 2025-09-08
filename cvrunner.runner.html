@@ -48,15 +48,15 @@
 <li class="toctree-l3"><a class="reference internal" href="cvrunner.experiment.html">cvrunner.experiment package</a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#">cvrunner.runner package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#cvrunner-runner-runner-module">cvrunner.runner.runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cvrunner.runner.runner">cvrunner.runner.runner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cvrunner.runner">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cvrunner.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#cvrunner-cli-module">cvrunner.cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-cvrunner.cli">cvrunner.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-cvrunner">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -91,11 +91,152 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="cvrunner-runner-runner-module">
-<h2>cvrunner.runner.runner module<a class="headerlink" href="#cvrunner-runner-runner-module" title="Link to this heading"></a></h2>
+<section id="module-cvrunner.runner.runner">
+<span id="cvrunner-runner-runner-module"></span><h2>cvrunner.runner.runner module<a class="headerlink" href="#module-cvrunner.runner.runner" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cvrunner.runner.runner.</span></span><span class="sig-name descname"><span class="pre">BaseRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Abstract class for runners</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ABC</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.checkpoint">
+<span class="sig-name descname"><span class="pre">checkpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.checkpoint" title="Link to this definition"></a></dt>
+<dd><p>For experiment checkpointing</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.run">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.run" title="Link to this definition"></a></dt>
+<dd><p>To run experiment</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.train_epoch">
+<span class="sig-name descname"><span class="pre">train_epoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.train_epoch" title="Link to this definition"></a></dt>
+<dd><p>For train epoch logic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.train_epoch_end">
+<span class="sig-name descname"><span class="pre">train_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.train_epoch_end" title="Link to this definition"></a></dt>
+<dd><p>For train epoch ending methods</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.train_epoch_start">
+<span class="sig-name descname"><span class="pre">train_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.train_epoch_start" title="Link to this definition"></a></dt>
+<dd><p>For train epoch starting methods</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.train_step" title="Link to this definition"></a></dt>
+<dd><p>Train step logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>) – input data to train</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.val_epoch">
+<span class="sig-name descname"><span class="pre">val_epoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.val_epoch" title="Link to this definition"></a></dt>
+<dd><p>For val epoch logic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.val_epoch_end">
+<span class="sig-name descname"><span class="pre">val_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.val_epoch_end" title="Link to this definition"></a></dt>
+<dd><p>For val epoch ending methods</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.val_epoch_start">
+<span class="sig-name descname"><span class="pre">val_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.val_epoch_start" title="Link to this definition"></a></dt>
+<dd><p>For val epoch starting methods</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.BaseRunner.val_step">
+<span class="sig-name descname"><span class="pre">val_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.BaseRunner.val_step" title="Link to this definition"></a></dt>
+<dd><p>Validation step logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>) – input data to validate</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cvrunner.runner.runner.</span></span><span class="sig-name descname"><span class="pre">TrainRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#cvrunner.runner.runner.BaseRunner" title="cvrunner.runner.runner.BaseRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseRunner</span></code></a></p>
+<p>Simple Runner for training</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.run" title="Link to this definition"></a></dt>
+<dd><p>To run experiment. General logic is
+for epoch in range(num_epochs):</p>
+<blockquote>
+<div><p>train_epoch_start()
+train_epoch()
+train_epoch_end()</p>
+<dl class="simple">
+<dt>if val_epoch:</dt><dd><p>val_epoch_start()
+val_epoch()
+val_epoch_end()</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.train_epoch">
+<span class="sig-name descname"><span class="pre">train_epoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.train_epoch" title="Link to this definition"></a></dt>
+<dd><p>Train epoch logic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.train_step" title="Link to this definition"></a></dt>
+<dd><p>Train step logic, basically call train_step function of experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>) – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.val_epoch">
+<span class="sig-name descname"><span class="pre">val_epoch</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.val_epoch" title="Link to this definition"></a></dt>
+<dd><p>Validation epoch logic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.runner.runner.TrainRunner.val_step">
+<span class="sig-name descname"><span class="pre">val_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.runner.runner.TrainRunner.val_step" title="Link to this definition"></a></dt>
+<dd><p>Validation step logic, basically call val_step function of experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>Any</em>) – _description_</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-cvrunner.runner">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cvrunner.runner" title="Link to this heading"></a></h2>
 </section>
 </section>
 

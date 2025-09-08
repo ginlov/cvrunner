@@ -48,16 +48,16 @@
 <li class="toctree-l2 current"><a class="reference internal" href="cvrunner.html#subpackages">Subpackages</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">cvrunner.experiment package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#cvrunner-experiment-experiment-module">cvrunner.experiment.experiment module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cvrunner.experiment.experiment">cvrunner.experiment.experiment module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cvrunner.experiment">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="cvrunner.runner.html">cvrunner.runner package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="cvrunner.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#cvrunner-cli-module">cvrunner.cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-cvrunner.cli">cvrunner.cli module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.html#module-cvrunner">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -92,11 +92,229 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="cvrunner-experiment-experiment-module">
-<h2>cvrunner.experiment.experiment module<a class="headerlink" href="#cvrunner-experiment-experiment-module" title="Link to this heading"></a></h2>
+<section id="module-cvrunner.experiment.experiment">
+<span id="cvrunner-experiment-experiment-module"></span><h2>cvrunner.experiment.experiment module<a class="headerlink" href="#module-cvrunner.experiment.experiment" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">cvrunner.experiment.experiment.</span></span><span class="sig-name descname"><span class="pre">BaseExperiment</span></span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Template for the configuration.
+Every experiments should be stateless.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.batch_size">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">batch_size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.batch_size" title="Link to this definition"></a></dt>
+<dd><p>Returns:
+int: batch size</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_dataloader">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_dataloader" title="Link to this definition"></a></dt>
+<dd><p>Dataloader building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition</strong> (<em>str</em>) – should be in [‘train’, ‘val’]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataLoader</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_dataset">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_dataset" title="Link to this definition"></a></dt>
+<dd><p>Dataset building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>partition</strong> (<em>str</em>) – should be in [‘train’, ‘val’]</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_loss_function">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_loss_function</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_loss_function" title="Link to this definition"></a></dt>
+<dd><p>Loss function building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable loss function</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_model">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_model" title="Link to this definition"></a></dt>
+<dd><p>Model building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_optimizer_scheduler">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_optimizer_scheduler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_optimizer_scheduler" title="Link to this definition"></a></dt>
+<dd><p>Optimizer and Learning scheduler building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>torch.nn.Module</em>) – model to be trained</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple[Optimizer, _LRScheduler]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.load_checkpoint">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_checkpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.load_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – checkpoint point file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>torch.nn.Module</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.num_epochs">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">num_epochs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.num_epochs" title="Link to this definition"></a></dt>
+<dd><p>Returns:
+int: num epochs</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.runner_cls">
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">runner_cls</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="cvrunner.runner.html#cvrunner.runner.runner.BaseRunner" title="cvrunner.runner.runner.BaseRunner"><span class="pre">BaseRunner</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.runner_cls" title="Link to this definition"></a></dt>
+<dd><p>Define type of runner to run this experiment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>runner class</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="cvrunner.runner.html#cvrunner.runner.runner.BaseRunner" title="cvrunner.runner.runner.BaseRunner">BaseRunner</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.save_checkpoint">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_checkpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.save_checkpoint" title="Link to this definition"></a></dt>
+<dd><p>Checkpointing logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.train_epoch_end">
+<span class="sig-name descname"><span class="pre">train_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.train_epoch_end" title="Link to this definition"></a></dt>
+<dd><p>Train epoch ending methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.train_epoch_start">
+<span class="sig-name descname"><span class="pre">train_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.train_epoch_start" title="Link to this definition"></a></dt>
+<dd><p>Train epoch startiting methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.train_step">
+<span class="sig-name descname"><span class="pre">train_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_scheduler</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.train_step" title="Link to this definition"></a></dt>
+<dd><p>Train step logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – model to be trained</p></li>
+<li><p><strong>data_batch</strong> (<em>DataBatch</em>) – data to train</p></li>
+<li><p><strong>loss_function</strong> (<em>torch.nn.Module</em>) – loss function</p></li>
+<li><p><strong>optimizer</strong> (<em>Optimizer</em>)</p></li>
+<li><p><strong>lr_scheduler</strong> (<em>_LRScheduler</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.val_epoch_end">
+<span class="sig-name descname"><span class="pre">val_epoch_end</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.val_epoch_end" title="Link to this definition"></a></dt>
+<dd><p>Validation epoch ending logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.val_epoch_start">
+<span class="sig-name descname"><span class="pre">val_epoch_start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.val_epoch_start" title="Link to this definition"></a></dt>
+<dd><p>Validation epoch startining methods</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.val_freq">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">val_freq</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.val_freq" title="Link to this definition"></a></dt>
+<dd><p>Returns:
+int: validation frequency</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.val_step">
+<span class="sig-name descname"><span class="pre">val_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.val_step" title="Link to this definition"></a></dt>
+<dd><p>validation step logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torch.nn.Module</em>)</p></li>
+<li><p><strong>data_batch</strong> (<em>DataBatch</em>)</p></li>
+<li><p><strong>loss_function</strong> (<em>torch.nn.Module</em>)</p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.Module</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-cvrunner.experiment">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cvrunner.experiment" title="Link to this heading"></a></h2>
 </section>
 </section>
 
