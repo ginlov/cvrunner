@@ -8,6 +8,9 @@ from typing import Type
 from cvrunner.runner.runner import BaseRunner
 from cvrunner.experiment.experiment import BaseExperiment
 
+# Add current working directory to sys.path
+sys.path.insert(0, str(pathlib.Path.cwd()))
+
 def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
     """Load experiment class from experiment file
 

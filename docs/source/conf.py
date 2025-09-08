@@ -22,7 +22,10 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",           # Google/NumPy style support
     "sphinx_autodoc_typehints",     # include type hints
+    "sphinx.ext.autosummary",
 ]
+
+autosummary_generate = True   # automatically create stub pages
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -32,5 +35,5 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'furo'
 html_static_path = ['_static']
