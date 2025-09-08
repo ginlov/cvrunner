@@ -8,6 +8,10 @@ from torch.utils.data import Dataset, DataLoader
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import _LRScheduler
 
+from cvrunner.utils.logger import get_cv_logger
+
+logger = get_cv_logger()
+
 if TYPE_CHECKING:
     from cvrunner.runner.runner import BaseRunner
 
@@ -52,6 +56,14 @@ class BaseExperiment(ABC):
             int: validation frequency
         """
         return 10
+    
+    @property
+    def wandb_project(self) -> str:
+        return 'default-cvrunner'
+    
+    @property
+    def wanbd_runname(self) -> None | str:
+        return None
     
     @abstractmethod
     def __init__(self) -> None:
@@ -142,7 +154,7 @@ class BaseExperiment(ABC):
         """
         Train epoch startiting methods
         """
-        pass
+        logger.info("Nothing happens before train epoch starts")
 
     # TODO: Correct the type hint for loss function
     def train_step(
@@ -163,19 +175,19 @@ class BaseExperiment(ABC):
             optimizer (Optimizer):
             lr_scheduler (_LRScheduler):
         """
-        pass
+        logger.info("Empty training step")
 
     def train_epoch_end(self) -> None:
         """
         Train epoch ending methods
         """
-        pass
+        logger.info("Nothing happens after train epoch ends")
 
     def val_epoch_start(self) -> None:
         """
         Validation epoch startining methods
         """
-        pass
+        logger.info("Nothing happens before val epoch starts")
 
     # TODO: Correct the type hint for loss function and criterion
     def val_step(
@@ -194,10 +206,10 @@ class BaseExperiment(ABC):
             loss_function (torch.nn.Module):
             criterion (torch.nn.Module):
         """
-        pass
+        logger.info("Empty validation step")
     
     def val_epoch_end(self) -> None:
         """
         Validation epoch ending logic
         """
-        pass
+        logger.info("Nothing happens after val epoch ends")

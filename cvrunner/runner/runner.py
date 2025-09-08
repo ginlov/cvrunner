@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Type
 
 from cvrunner.experiment.experiment import BaseExperiment
+from cvrunner.utils.logger import get_cv_logger
+
+logger = get_cv_logger()
 
 class BaseRunner(ABC):
     """Abstract class for runners
@@ -18,7 +21,7 @@ class BaseRunner(ABC):
         Args:
             experiment (Type[BaseExperiment]): experiment to run
         """
-        pass
+        self.experiment = experiment
     
     @abstractmethod
     def run(self):
@@ -31,43 +34,45 @@ class BaseRunner(ABC):
         """
         For experiment checkpointing
         """
-        pass
+        logger.info("Start checkpointing")
+        self.experiment.save_checkpoint()
+        logger.info("Done checkpointing")
 
     def train_epoch_start(self):
         """
         For train epoch starting methods
         """
-        pass
+        self.experiment.train_epoch_start()
 
     def train_epoch(self):
         """
         For train epoch logic
         """
-        pass
+        logger.info("Empty training epoch")
 
     def train_epoch_end(self):
         """
         For train epoch ending methods
         """
-        pass
+        self.experiment.train_epoch_end()
 
     def val_epoch_start(self):
         """
         For val epoch starting methods
         """
-        pass
+        self.experiment.val_epoch_start()
 
     def val_epoch(self):
         """
         For val epoch logic
         """
-        pass
+        logger.info("Empty validation epoch")
 
     def val_epoch_end(self):
         """
         For val epoch ending methods
         """
-        pass
+        self.experiment.val_epoch_end()
 
     def train_step(self, data: Any):
         """
@@ -76,7 +81,7 @@ class BaseRunner(ABC):
         Args:
             data (Any): input data to train
         """
-        pass
+        logger.info("Empty train step")
 
     def val_step(self, data: Any):
         """
@@ -85,7 +90,7 @@ class BaseRunner(ABC):
         Args:
             data (Any): input data to validate
         """
-        pass
+        logger.info("Empty validation step")
 
 class TrainRunner(BaseRunner):
     """
@@ -101,20 +106,31 @@ class TrainRunner(BaseRunner):
         Args:
             experiment (BaseExperiment): _description_
         """
+        logger.info("START INITIALIZING TRAIN RUNNER")
         self.experiment = experiment
         
+        logger.info(f"Building model")
         # build model
         self.model = self.experiment.build_model()
+        logger.info("Done building model")
         
+        logger.info("Building loss function")
         # build loss function
         self.loss_function = self.experiment.build_loss_function()
+        logger.info("Done building loss function")
 
+        logger.info("Building dataloaders")
         # build data loader
         self.train_dataloader = self.experiment.build_dataloader(partition='train')
         self.val_dataloader = self.experiment.build_dataloader(partition='val')
+        logger.info("Done building dataloaders")
 
+        logger.info("Building optimizer and learning rate scheduler")
         # build optimizer
         self.optimizer, self.lr_scheduler = self.experiment.build_optimizer_scheduler(self.model)
+        logger.info("Done building optimizer and learning rate scheduler")
+
+        logger.info("DONE INITIALIZING TRAIN RUNNER")
 
     def run(self):
         """
@@ -138,15 +154,20 @@ class TrainRunner(BaseRunner):
         """
         num_epoch = self.experiment.num_epochs
         val_freq = self.experiment.val_freq
+        logger.info(f"Start training model with {num_epoch} epochs and validating model every {val_freq} epochs.")
         for epoch in range(num_epoch):
+            logger.info(f"Start training epoch {epoch}.")
             self.train_epoch_start()
             self.train_epoch()
             self.train_epoch_end()
+            logger.info(f"Done training epoch {epoch}")
 
             if epoch % val_freq == 0:
+                logger.info(f"Start validation at epoch {epoch}.")
                 self.val_epoch_start()
                 self.val_epoch()
                 self.val_epoch_end()
+                logger.info(f"Done validaiton at epoch {epoch}.")
 
     def train_epoch(self):
         """

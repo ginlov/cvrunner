@@ -4,10 +4,13 @@ from torch.utils.data import Dataset, DataLoader
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
 
-from cvrunner.experiment.experiment import BaseExperiment, DataBatch
+from cvrunner.experiment.experiment import BaseExperiment
 from cvrunner.runner.runner import TrainRunner
+from cvrunner.utils.logger import get_cv_logger
 
 from tests.dummy_dataset import DummyDataset
+
+logger = get_cv_logger()
 
 # -----------------------------
 # Dummy Experiment
@@ -72,6 +75,7 @@ class DummyExperiment(BaseExperiment):
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = loss_function(outputs, labels)
+        logger.info(f"Loss value {loss.item()}")
         loss.backward()
         optimizer.step()
         return {"loss": loss.item()}
