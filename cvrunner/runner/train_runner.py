@@ -1,96 +1,10 @@
-from abc import ABC, abstractmethod
-from typing import Any, Type
+from typing import Any
 
 from cvrunner.experiment.experiment import BaseExperiment
+from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.utils.logger import get_cv_logger
 
 logger = get_cv_logger()
-
-class BaseRunner(ABC):
-    """Abstract class for runners
-
-    Args:
-        ABC (_type_): _description_
-    """
-    @abstractmethod
-    def __init__(
-        self,
-        experiment: Type[BaseExperiment]
-        ) -> None:
-        """
-        Args:
-            experiment (Type[BaseExperiment]): experiment to run
-        """
-        self.experiment = experiment
-    
-    @abstractmethod
-    def run(self):
-        """
-        To run experiment
-        """
-        pass
-
-    def checkpoint(self):
-        """
-        For experiment checkpointing
-        """
-        logger.info("Start checkpointing")
-        self.experiment.save_checkpoint()
-        logger.info("Done checkpointing")
-
-    def train_epoch_start(self):
-        """
-        For train epoch starting methods
-        """
-        self.experiment.train_epoch_start()
-
-    def train_epoch(self):
-        """
-        For train epoch logic
-        """
-        logger.info("Empty training epoch")
-
-    def train_epoch_end(self):
-        """
-        For train epoch ending methods
-        """
-        self.experiment.train_epoch_end()
-
-    def val_epoch_start(self):
-        """
-        For val epoch starting methods
-        """
-        self.experiment.val_epoch_start()
-
-    def val_epoch(self):
-        """
-        For val epoch logic
-        """
-        logger.info("Empty validation epoch")
-
-    def val_epoch_end(self):
-        """
-        For val epoch ending methods
-        """
-        self.experiment.val_epoch_end()
-
-    def train_step(self, data: Any):
-        """
-        Train step logic
-
-        Args:
-            data (Any): input data to train
-        """
-        logger.info("Empty train step")
-
-    def val_step(self, data: Any):
-        """
-        Validation step logic
-
-        Args:
-            data (Any): input data to validate
-        """
-        logger.info("Empty validation step")
 
 class TrainRunner(BaseRunner):
     """
@@ -129,6 +43,9 @@ class TrainRunner(BaseRunner):
         # build optimizer
         self.optimizer, self.lr_scheduler = self.experiment.build_optimizer_scheduler(self.model)
         logger.info("Done building optimizer and learning rate scheduler")
+
+        # Initial step for logging
+        self.step = 0
 
         logger.info("DONE INITIALIZING TRAIN RUNNER")
 
@@ -190,13 +107,15 @@ class TrainRunner(BaseRunner):
         Args:
             data (Any): _description_
         """
-        self.experiment.train_step(
+        metrics = self.experiment.train_step(
             self.model,
             data,
             self.loss_function,
             self.optimizer,
             self.lr_scheduler
         )
+        logger.log_metrics(metrics, local_step=self.step)
+        self.step += 1
 
     def val_step(self, data: Any):
         """
@@ -205,7 +124,7 @@ class TrainRunner(BaseRunner):
         Args:
             data (Any): _description_
         """
-        self.experiment.val_step(
+        metrics = self.experiment.val_step(
             self.model,
             data,
             self.loss_function,

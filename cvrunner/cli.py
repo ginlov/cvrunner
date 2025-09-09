@@ -5,7 +5,7 @@ import pathlib
 
 from typing import Type
 
-from cvrunner.runner.runner import BaseRunner
+from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.experiment.experiment import BaseExperiment
 from cvrunner.utils.logger import get_cv_logger
 
@@ -47,26 +47,24 @@ def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
     return exp_classes[0]
 
 def main():
-    """
-    Entry point for cvrunner
-    """
     parser = argparse.ArgumentParser(description="Run experiments with cvrunner.")
-    parser.add_argument(
-        "--exp",
-        type=str,
-        required=True,
-        help="Path to experiment Python file (must contain exactly one Experiment class)."
-    )
+    parser.add_argument("-e", "--exp", type=str, required=True)
     args = parser.parse_args()
 
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
+
     runner_cls = exp.runner_cls
     wandb_project = exp.wandb_project
-    wandb_runname = exp.wanbd_runname
-    logger = get_cv_logger(wandb_project=wandb_project, wandb_runname=wandb_runname)
-    logger.info('Successfully initialize experiment.')
-    logger.info('Start initializing runner')
+    wandb_runname = exp.wandb_runname
+
+    logger = get_cv_logger()
+    if wandb_project is not None:
+        logger.init_wandb(project=wandb_project, run_name=wandb_runname, config=vars(exp))
+
+    logger.info("Successfully initialized experiment.")
+    logger.info("Start initializing runner")
+
     runner: BaseRunner = runner_cls(exp)
-    logger.info('Start running runner')
+    logger.info("Start running runner")
     runner.run()

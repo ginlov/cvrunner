@@ -211,3 +211,6 @@ __marimo__/
 
 # Ignore docs build folder
 docs/build/
+
+# wandb folder
+wandb/

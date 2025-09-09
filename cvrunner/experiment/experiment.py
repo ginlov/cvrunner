@@ -13,9 +13,11 @@ from cvrunner.utils.logger import get_cv_logger
 logger = get_cv_logger()
 
 if TYPE_CHECKING:
-    from cvrunner.runner.runner import BaseRunner
+    from cvrunner.runner.base_runner import BaseRunner
 
 DataBatch = Dict[str, Union[Any, torch.tensor]]
+
+MetricType = Dict[str, Any]
 
 class BaseExperiment(ABC):
     """
@@ -62,7 +64,7 @@ class BaseExperiment(ABC):
         return 'default-cvrunner'
     
     @property
-    def wanbd_runname(self) -> None | str:
+    def wandb_runname(self) -> None | str:
         return None
     
     @abstractmethod
@@ -164,7 +166,7 @@ class BaseExperiment(ABC):
         loss_function: torch.nn.Module,
         optimizer: Optimizer,
         lr_scheduler: _LRScheduler
-        ) -> None:
+        ) -> MetricType:
         """
         Train step logic
 
@@ -176,6 +178,7 @@ class BaseExperiment(ABC):
             lr_scheduler (_LRScheduler):
         """
         logger.info("Empty training step")
+        return {}
 
     def train_epoch_end(self) -> None:
         """
@@ -196,7 +199,7 @@ class BaseExperiment(ABC):
         data_batch: DataBatch,
         loss_function: torch.nn.Module,
         criterion: torch.nn.Module
-        ) -> None:
+        ) -> MetricType:
         """
         validation step logic
 
@@ -207,6 +210,7 @@ class BaseExperiment(ABC):
             criterion (torch.nn.Module):
         """
         logger.info("Empty validation step")
+        return {}
     
     def val_epoch_end(self) -> None:
         """

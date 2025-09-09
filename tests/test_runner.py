@@ -4,8 +4,8 @@ from torch.utils.data import Dataset, DataLoader
 from torch.optim import Adam
 from torch.optim.lr_scheduler import StepLR
 
-from cvrunner.experiment.experiment import BaseExperiment
-from cvrunner.runner.runner import TrainRunner
+from cvrunner.experiment.experiment import BaseExperiment, MetricType
+from cvrunner.runner.train_runner import TrainRunner
 from cvrunner.utils.logger import get_cv_logger
 
 from tests.dummy_dataset import DummyDataset
@@ -70,7 +70,7 @@ class DummyExperiment(BaseExperiment):
     def train_epoch_start(self):
         print("Training epoch started.")
 
-    def train_step(self, model, data_batch, loss_function, optimizer, lr_scheduler):
+    def train_step(self, model, data_batch, loss_function, optimizer, lr_scheduler) -> MetricType:
         inputs, labels = data_batch["inputs"], data_batch["labels"]
         optimizer.zero_grad()
         outputs = model(inputs)
