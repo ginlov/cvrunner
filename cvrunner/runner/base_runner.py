@@ -42,6 +42,7 @@ class BaseRunner(ABC):
         """
         self.experiment.train_epoch_start()
 
+    @abstractmethod
     def train_epoch(self):
         """
         For train epoch logic
@@ -59,7 +60,8 @@ class BaseRunner(ABC):
         For val epoch starting methods
         """
         self.experiment.val_epoch_start()
-
+    
+    @abstractmethod
     def val_epoch(self):
         """
         For val epoch logic
@@ -71,7 +73,8 @@ class BaseRunner(ABC):
         For val epoch ending methods
         """
         self.experiment.val_epoch_end()
-
+    
+    @abstractmethod
     def train_step(self, data: Any):
         """
         Train step logic
@@ -81,6 +84,7 @@ class BaseRunner(ABC):
         """
         pass
 
+    @abstractmethod
     def val_step(self, data: Any):
         """
         Validation step logic

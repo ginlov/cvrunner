@@ -3,6 +3,7 @@ from typing import Any
 from cvrunner.experiment.experiment import BaseExperiment
 from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.utils.logger import get_cv_logger
+from cvrunner.utils.utils import MetricAggregator, MultiMetricAggregator
 
 logger = get_cv_logger()
 
@@ -46,6 +47,9 @@ class TrainRunner(BaseRunner):
 
         # Initial step for logging
         self.step = 0
+
+        # Initial validation metrics aggregator
+        self.valid_metrics = MultiMetricAggregator()
 
         logger.info("DONE INITIALIZING TRAIN RUNNER")
 
@@ -117,6 +121,13 @@ class TrainRunner(BaseRunner):
         logger.log_metrics(metrics, local_step=self.step)
         self.step += 1
 
+    def val_epoch_end(self):
+        super().val_epoch_end()
+
+        logger.log_metrics(self.valid_metrics.summary(), local_step=self.step)
+        self.valid_metrics.reset()
+    
+    # TODO: Create MetricAggregator to aggregate validation metrics and logging
     def val_step(self, data: Any):
         """
         Validation step logic, basically call val_step function of experiment.
@@ -130,3 +141,4 @@ class TrainRunner(BaseRunner):
             self.loss_function,
             None
         )
+        self.valid_metrics.update(metrics)

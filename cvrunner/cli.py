@@ -35,10 +35,15 @@ def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
     sys.modules["experiment_module"] = module
     spec.loader.exec_module(module)
 
-    # Find subclass of BaseExperiment
+    # Find subclass of BaseExperiment defined in *this* module
     exp_classes = [
         obj for obj in module.__dict__.values()
-        if isinstance(obj, type) and issubclass(obj, BaseExperiment) and obj is not BaseExperiment
+        if (
+            isinstance(obj, type) 
+            and issubclass(obj, BaseExperiment) 
+            and obj is not BaseExperiment
+            and obj.__module__ == module.__name__  # only classes defined here
+        )
     ]
     if len(exp_classes) != 1:
         raise RuntimeError(
