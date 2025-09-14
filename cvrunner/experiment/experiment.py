@@ -24,7 +24,6 @@ class BaseExperiment(ABC):
     Template for the configuration.
     Every experiments should be stateless.
     """
-    @property
     @abstractmethod
     def runner_cls(self) -> Type[BaseRunner]:
         """

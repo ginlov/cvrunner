@@ -59,7 +59,7 @@ def main():
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
 
-    runner_cls = exp.runner_cls
+    runner_cls = exp.runner_cls()
     wandb_project = exp.wandb_project
     wandb_runname = exp.wandb_runname
 

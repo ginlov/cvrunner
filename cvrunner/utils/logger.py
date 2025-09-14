@@ -16,10 +16,11 @@ class CVLogger(logging.Logger):
 
     def __init__(self, name="cvrunner", level=logging.INFO):
         super().__init__(name, level)
+        self.propagate = False
 
         # Console logging only once (on rank 0)
         if not self.handlers and dist.is_main_process():
-            handler = logging.StreamHandler(sys.stdout)
+            handler = logging.StreamHandler(sys.__stdout__)  # safe against pytest
             handler.setLevel(level)
             formatter = logging.Formatter(
                 "[%(asctime)s] [%(levelname)s] %(message)s",

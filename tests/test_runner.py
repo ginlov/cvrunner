@@ -6,6 +6,7 @@ from torch.optim.lr_scheduler import StepLR
 
 from cvrunner.experiment.experiment import BaseExperiment, MetricType
 from cvrunner.runner.train_runner import TrainRunner
+from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.utils.logger import get_cv_logger
 
 from tests.dummy_dataset import DummyDataset
@@ -18,10 +19,9 @@ logger = get_cv_logger()
 class DummyExperiment(BaseExperiment):
     def __init__(self):
         # Nothing to keep stateful (your design goal)
-        pass
+        super().__init__()
 
-    @property
-    def runner_cls(self) -> object:
+    def runner_cls(self) -> type[BaseRunner]:
         return TrainRunner
     
     @property
@@ -97,5 +97,17 @@ class DummyExperiment(BaseExperiment):
 
 def test_runner_trains_one_epoch():
     exp = DummyExperiment()
-    runner = exp.runner_cls(exp)
+    runner_cls = exp.runner_cls()
+    wandb_project = exp.wandb_project
+    wandb_runname = exp.wandb_runname
+
+    logger = get_cv_logger()
+    if wandb_project is not None:
+        logger.init_wandb(project=wandb_project, run_name=wandb_runname, config=vars(exp))
+
+    logger.info("Successfully initialized experiment.")
+    logger.info("Start initializing runner")
+
+    runner: BaseRunner = runner_cls(exp)
+    logger.info("Start running runner")
     runner.run()
