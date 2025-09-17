@@ -51,8 +51,16 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cvrunner-cli-module">cvrunner.cli module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cvrunner.cli">cvrunner.cli module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.build_docker_image"><code class="docutils literal notranslate"><span class="pre">build_docker_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.docker_image_exists"><code class="docutils literal notranslate"><span class="pre">docker_image_exists()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.load_experiment_class"><code class="docutils literal notranslate"><span class="pre">load_experiment_class()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.run_in_docker"><code class="docutils literal notranslate"><span class="pre">run_in_docker()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.run_local"><code class="docutils literal notranslate"><span class="pre">run_local()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-cvrunner">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -89,14 +97,38 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="cvrunner.experiment.html">cvrunner.experiment package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cvrunner.experiment.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.experiment.html#cvrunner-experiment-experiment-module">cvrunner.experiment.experiment module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.experiment.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.experiment.html#module-cvrunner.experiment.experiment">cvrunner.experiment.experiment module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment"><code class="docutils literal notranslate"><span class="pre">BaseExperiment</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.batch_size"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.batch_size</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.build_dataloader"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.build_dataloader()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.build_dataset"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.build_dataset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.build_loss_function"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.build_loss_function()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.build_model"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.build_model()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.build_optimizer_scheduler"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.build_optimizer_scheduler()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.load_checkpoint"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.load_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.num_epochs"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.num_epochs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.runner_cls"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.runner_cls()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.save_checkpoint"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.save_checkpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.train_epoch_end"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.train_epoch_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.train_epoch_start"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.train_epoch_start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.train_step"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.train_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.val_epoch_end"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.val_epoch_end()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.val_epoch_start"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.val_epoch_start()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.val_freq"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.val_freq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.val_step"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.val_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.wandb_project"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.wandb_project</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment.wandb_runname"><code class="docutils literal notranslate"><span class="pre">BaseExperiment.wandb_runname</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.experiment.html#module-cvrunner.experiment">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cvrunner.runner.html">cvrunner.runner package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cvrunner.runner.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cvrunner.runner.html#cvrunner-runner-runner-module">cvrunner.runner.runner module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cvrunner.runner.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cvrunner.runner.html#module-cvrunner.runner">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -105,11 +137,67 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="cvrunner-cli-module">
-<h2>cvrunner.cli module<a class="headerlink" href="#cvrunner-cli-module" title="Link to this heading"></a></h2>
+<section id="module-cvrunner.cli">
+<span id="cvrunner-cli-module"></span><h2>cvrunner.cli module<a class="headerlink" href="#module-cvrunner.cli" title="Link to this heading"></a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.build_docker_image">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">build_docker_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.build_docker_image" title="Link to this definition"></a></dt>
+<dd><p>Build docker image using docker-compose in environments/.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.docker_image_exists">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">docker_image_exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.docker_image_exists" title="Link to this definition"></a></dt>
+<dd><p>Check if a docker image exists locally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.load_experiment_class">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">load_experiment_class</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.load_experiment_class" title="Link to this definition"></a></dt>
+<dd><p>Load experiment class from experiment file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>exp_path</strong> (<em>str</em>) – path to exp file</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – if exp_path file does not exist</p></li>
+<li><p><strong>RuntimeError</strong> – exp_path file has more than 1 experiment class</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Experiment class</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Type[<a class="reference internal" href="cvrunner.experiment.html#cvrunner.experiment.experiment.BaseExperiment" title="cvrunner.experiment.experiment.BaseExperiment">BaseExperiment</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.main">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.main" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.run_in_docker">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">run_in_docker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">build</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.run_in_docker" title="Link to this definition"></a></dt>
+<dd><p>Launch Docker container and run training inside</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.run_local">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">run_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.run_local" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<section id="module-cvrunner">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-cvrunner" title="Link to this heading"></a></h2>
 </section>
 </section>
 
