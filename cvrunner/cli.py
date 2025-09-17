@@ -2,8 +2,11 @@ import argparse
 import importlib
 import sys
 import pathlib
+import subprocess
+import os
 
 from typing import Type
+from argparse import Namespace
 
 from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.experiment.experiment import BaseExperiment
@@ -51,11 +54,7 @@ def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
         )
     return exp_classes[0]
 
-def main():
-    parser = argparse.ArgumentParser(description="Run experiments with cvrunner.")
-    parser.add_argument("-e", "--exp", type=str, required=True)
-    args = parser.parse_args()
-
+def run_local(args: Namespace):
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
 
@@ -73,3 +72,54 @@ def main():
     runner: BaseRunner = runner_cls(exp)
     logger.info("Start running runner")
     runner.run()
+
+def docker_image_exists(image: str) -> bool:
+    """Check if a docker image exists locally."""
+    result = subprocess.run(
+        ["docker", "images", "-q", image],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True
+    )
+    return result.stdout.strip() != ""
+
+def build_docker_image(image: str):
+    """Build docker image using docker-compose in environments/."""
+    env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
+    print(f"[CVRUNNER] Building docker image {image} from {env_dir}...")
+    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
+
+def run_in_docker(exp_path, extra_args, build):
+    """Launch Docker container and run training inside"""
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    image_name = "cvrunner:latest"
+
+    # Auto-build if needed
+    if build or not docker_image_exists(image_name):
+        build_docker_image(image_name)
+
+    cmd = [
+        "docker", "run", "--rm",
+        "-v", f"{project_root}:/workspace",
+        "-w", "/workspace",
+        "cvrunner:latest",  # Docker image name
+        "-l",
+        "--exp", exp_path
+    ] + extra_args
+
+    print(" ".join(cmd))
+    subprocess.run(cmd, check=True)
+
+def main():
+    parser = argparse.ArgumentParser(description="Run experiments with cvrunner.")
+    parser.add_argument("-e", "--exp", type=str, required=True)
+    parser.add_argument("-l", "--run-local", action="store_true", help="Run the experiment locally instead of inside Docker")
+    parser.add_argument("--build", action="store_true", help="Build Docker image before running")
+    args = parser.parse_args()
+
+    if args.run_local:
+        run_local(args)
+    else:
+        exp_path = args.exp
+        exp_args = []
+        run_in_docker(exp_path, exp_args, args.build)
