@@ -4,6 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'cvrunner/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'cvrunner/**'
 
 jobs:
   build:

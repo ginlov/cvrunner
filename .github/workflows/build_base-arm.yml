@@ -3,12 +3,21 @@ name: Build and Push Base Docker Image for arm achitecture
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'requirements.txt'
       - 'pyproject.toml'
       - 'poetry.lock'
-      - 'base_environments/Dockerfile'
+      - 'base_environments/Dockerfile.arm'
+      - 'cvrunner/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'requirements.txt'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'base_environments/Dockerfile.arm'
       - 'cvrunner/**'
   workflow_dispatch: # allow manual trigger
 
@@ -45,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: base_environments/Dockerfilel.arm
+          file: base_environments/Dockerfile.arm
           push: true
           platforms: linux/arm64
           tags: |

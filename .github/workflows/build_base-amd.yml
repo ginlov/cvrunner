@@ -3,7 +3,16 @@ name: Build and Push Base Docker Image for amd architecture
 on:
   push:
     branches:
-      - master
+      - main
+    paths:
+      - 'requirements.txt'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'base_environments/Dockerfile'
+      - 'cvrunner/**'
+  pull_request:
+    branches:
+      - main
     paths:
       - 'requirements.txt'
       - 'pyproject.toml'
