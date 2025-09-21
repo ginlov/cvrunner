@@ -1,4 +1,4 @@
-name: Build and Push Base Docker Image
+name: Build and Push Base Docker Image for arm achitecture
 
 on:
   push:
@@ -47,9 +47,9 @@ jobs:
           context: .
           file: base_environments/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/cvrunner-base:latest
-            ${{ secrets.DOCKER_USERNAME }}/cvrunner-base:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/cvrunner-base-arm:latest
+            ${{ secrets.DOCKER_USERNAME }}/cvrunner-base-arm:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
