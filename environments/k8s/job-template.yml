@@ -13,6 +13,11 @@ spec:
         image: __IMAGE__            # placeholder
         workingDir: __WORKING_DIR__
         args: ["-l", "--exp", "__EXP__"]
+        env:
+          - name: JOB_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
         resources:
           requests:
             cpu: "2"
