@@ -89,12 +89,11 @@ def build_docker_image(image: str):
     """Build docker image using docker-compose in environments/."""
     env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
     logger.info(f"[CVRUNNER] Building docker image {image} from {env_dir}...")
-    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
+    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose-arm.yml"), "build"], check=True)
 
 def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
     """Launch Docker container and run training inside"""
-    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    image_name = "cvrunner:latest"
+    image_name = "cvrunner-arm:latest"
 
     # Auto-build if needed
     if build or not docker_image_exists(image_name):
@@ -102,7 +101,6 @@ def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
 
     cmd = [
         "docker", "run", "--rm",
-        "-v", f"{project_root}:/workspace",
         "-w", "/workspace",
         "cvrunner:latest",  # Docker image name
         "-l",
@@ -119,7 +117,7 @@ def build_and_push_image(image: str):
 
     subprocess.run([
         "docker", "buildx", "build",
-        "--platform", "linux/amd64,linux/arm64",
+        "--platform", "linux/amd64",
         "-t", image,
         "-f", str(project_root / "environments" / "Dockerfile"),
         str(project_root),

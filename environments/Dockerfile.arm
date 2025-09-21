@@ -1,5 +1,5 @@
 # Dockerfile
-FROM oel20/cvrunner-base-amd:latest
+FROM oel20/cvrunner-base-arm:latest
 
 # Copy dependency file first for caching
 COPY poetry.lock* requirements.txt* /workspace/

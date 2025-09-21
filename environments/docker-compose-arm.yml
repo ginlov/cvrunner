@@ -1,0 +1,13 @@
+services:
+  cvrunner:
+    build: 
+      context: ..
+      dockerfile: environments/Dockerfile.arm
+    image: cvrunner-arm:latest
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY}
+    stdin_open: true
+    tty: true
