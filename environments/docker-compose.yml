@@ -3,7 +3,7 @@ services:
     build: 
       context: ..
       dockerfile: environments/Dockerfile
-    image: cvrunner:latest
+    image: cvrunner-local:latest
     volumes:
       - .:/workspace
     working_dir: /workspace

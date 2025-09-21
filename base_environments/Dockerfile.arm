@@ -1,5 +1,5 @@
 # Dockerfile
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN pip install --no-cache-dir -U pip \
     && if [ -f poetry.lock ]; then pip install poetry && poetry install --no-dev; fi
 
 # Install torch
-RUN pip install torch==2.6.0
+RUN pip install torch==2.5.1
 
 # Copy project files
 COPY . ./cvrunner

@@ -85,24 +85,24 @@ def docker_image_exists(image: str) -> bool:
     )
     return result.stdout.strip() != ""
 
-def build_docker_image(image: str):
+def build_docker_image():
     """Build docker image using docker-compose in environments/."""
     env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
-    logger.info(f"[CVRUNNER] Building docker image {image} from {env_dir}...")
-    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose-arm.yml"), "build"], check=True)
+    logger.info(f"[CVRUNNER] Building docker image cvrunner-local from {env_dir}...")
+    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
 
 def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
     """Launch Docker container and run training inside"""
-    image_name = "cvrunner-arm:latest"
+    image_name = "cvrunner-local:latest"
 
     # Auto-build if needed
     if build or not docker_image_exists(image_name):
-        build_docker_image(image_name)
+        build_docker_image()
 
     cmd = [
         "docker", "run", "--rm",
         "-w", "/workspace",
-        "cvrunner:latest",  # Docker image name
+        image_name,  # Docker image name
         "-l",
         "--exp", exp_path
     ] + extra_args
