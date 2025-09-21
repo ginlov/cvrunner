@@ -112,7 +112,24 @@ def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
     logger.info(" ".join(cmd))
     subprocess.run(cmd, check=True)
 
+def build_and_push_image(image: str):
+    """Build and push image for Kubernetes using buildx."""
+    project_root = pathlib.Path(__file__).resolve().parent.parent
+    logger.info(f"[CVRUNNER] Building and pushing Docker image {image}...")
+
+    subprocess.run([
+        "docker", "buildx", "build",
+        "--platform", "linux/amd64,linux/arm64",
+        "-t", image,
+        "-f", str(project_root / "environments" / "Dockerfile"),
+        str(project_root),
+        "--push"
+    ], check=True)
+
 def run_on_k8s(image: str, exp_path: str):
+    # Always build + push latest image before creating job
+    build_and_push_image(image)
+
     env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments" / "k8s"
     template_file = env_dir / "job-template.yml"
 
@@ -121,9 +138,9 @@ def run_on_k8s(image: str, exp_path: str):
 
     # Replace placeholders
     job["spec"]["template"]["spec"]["containers"][0]["image"] = image
+    job["spec"]["template"]["spec"]["containers"][0]["workingDir"] = "/workspace"
     job["spec"]["template"]["spec"]["containers"][0]["args"] = ["-l", "--exp", exp_path]
 
-    # Save rendered job file
     with tempfile.NamedTemporaryFile("w", suffix=".yml", delete=False) as f:
         yaml.dump(job, f)
         jobfile = f.name

@@ -10,6 +10,7 @@ spec:
       containers:
       - name: cvrunner
         image: __IMAGE__            # placeholder
+        workingDir: __WORKING_DIR__
         args: ["-l", "--exp", "__EXP__"]
         resources:
           requests:
