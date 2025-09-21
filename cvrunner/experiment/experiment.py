@@ -164,7 +164,8 @@ class BaseExperiment(ABC):
         data_batch: DataBatch,
         loss_function: torch.nn.Module,
         optimizer: Optimizer,
-        lr_scheduler: _LRScheduler
+        lr_scheduler: _LRScheduler,
+        device: torch.device
         ) -> MetricType:
         """
         Train step logic
@@ -197,7 +198,8 @@ class BaseExperiment(ABC):
         model: torch.nn.Module,
         data_batch: DataBatch,
         loss_function: torch.nn.Module,
-        criterion: torch.nn.Module
+        criterion: torch.nn.Module,
+        device: torch.device
         ) -> MetricType:
         """
         validation step logic

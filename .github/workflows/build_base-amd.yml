@@ -59,6 +59,7 @@ jobs:
           platforms: linux/amd64
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/cvrunner-base-amd:latest
+            ${{ secrets.DOCKER_USERNAME }}/cvrunner:latest
             ${{ secrets.DOCKER_USERNAME }}/cvrunner-base-amd:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

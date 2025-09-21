@@ -70,8 +70,8 @@ class DummyExperiment(BaseExperiment):
     def train_epoch_start(self):
         print("Training epoch started.")
 
-    def train_step(self, model, data_batch, loss_function, optimizer, lr_scheduler) -> MetricType:
-        inputs, labels = data_batch["inputs"], data_batch["labels"]
+    def train_step(self, model, data_batch, loss_function, optimizer, lr_scheduler, device) -> MetricType:
+        inputs, labels = data_batch["inputs"].to(device), data_batch["labels"].to(device)
         optimizer.zero_grad()
         outputs = model(inputs)
         loss = loss_function(outputs, labels)
@@ -86,8 +86,8 @@ class DummyExperiment(BaseExperiment):
     def val_epoch_start(self):
         print("Validation epoch started.")
 
-    def val_step(self, model, data_batch, loss_function, criterion):
-        inputs, labels = data_batch["inputs"], data_batch["labels"]
+    def val_step(self, model, data_batch, loss_function, criterion, device):
+        inputs, labels = data_batch["inputs"].to(device), data_batch["labels"].to(device)
         outputs = model(inputs)
         loss = loss_function(outputs, labels)
         return {"val_loss": loss.item()}

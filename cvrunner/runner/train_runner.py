@@ -1,3 +1,5 @@
+import torch
+
 from typing import Any
 
 from cvrunner.experiment.experiment import BaseExperiment
@@ -23,10 +25,14 @@ class TrainRunner(BaseRunner):
         """
         logger.info("START INITIALIZING TRAIN RUNNER")
         self.experiment = experiment
+
+        # detect device
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        logger.info(f"Using device: {self.device}")
         
         logger.info(f"Building model")
         # build model
-        self.model = self.experiment.build_model()
+        self.model = self.experiment.build_model().to(self.device)
         logger.info("Done building model")
         
         logger.info("Building loss function")
@@ -116,7 +122,8 @@ class TrainRunner(BaseRunner):
             data,
             self.loss_function,
             self.optimizer,
-            self.lr_scheduler
+            self.lr_scheduler,
+            self.device
         )
         logger.log_metrics(metrics, local_step=self.step)
         self.step += 1
@@ -139,6 +146,7 @@ class TrainRunner(BaseRunner):
             self.model,
             data,
             self.loss_function,
-            None
+            None,
+            self.device
         )
         self.valid_metrics.update(metrics)

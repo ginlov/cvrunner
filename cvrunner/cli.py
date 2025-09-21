@@ -70,7 +70,8 @@ def run_local(args: Namespace) -> None:
     runner_cls = exp.runner_cls()
     wandb_project = exp.wandb_project
     job_name = os.environ.get("JOB_NAME")
-    wandb_runname = job_name if job_name else exp.wandb_runname  # fallback for local runs
+    # TODO: a bit tricky here, clean it later
+    wandb_runname = "-".join(job_name.split('-')[:-1]) if job_name else exp.wandb_runname  # fallback for local runs
 
     if wandb_project is not None:
         logger.init_wandb(project=wandb_project, run_name=wandb_runname, config=vars(exp))
