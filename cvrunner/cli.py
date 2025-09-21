@@ -6,6 +6,7 @@ import subprocess
 import os
 import tempfile
 import yaml
+import textwrap
 
 from typing import Type, List
 from argparse import Namespace
@@ -57,7 +58,12 @@ def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
         )
     return exp_classes[0]
 
-def run_local(args: Namespace):
+def run_local(args: Namespace) -> None:
+    """Run experiment locally.
+
+    Args:
+        args (Namespace): argurments for training job
+    """
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
 
@@ -76,7 +82,14 @@ def run_local(args: Namespace):
     runner.run()
 
 def docker_image_exists(image: str) -> bool:
-    """Check if a docker image exists locally."""
+    """Check if a Docker image exists locally.
+
+    Args:
+        image (str): image name with tag
+
+    Returns:
+        bool
+    """
     result = subprocess.run(
         ["docker", "images", "-q", image],
         stdout=subprocess.PIPE,
@@ -85,14 +98,21 @@ def docker_image_exists(image: str) -> bool:
     )
     return result.stdout.strip() != ""
 
-def build_docker_image():
+def build_docker_image() -> None:
     """Build docker image using docker-compose in environments/."""
     env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
     logger.info(f"[CVRUNNER] Building docker image cvrunner-local from {env_dir}...")
     subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
 
-def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
-    """Launch Docker container and run training inside"""
+def run_in_docker(args: Namespace) -> None:
+    """Run experiment inside Docker container.
+
+    Args:
+        args (Namespace): argurments for training job
+    """
+    exp_path = args.exp
+    extra_args = []
+    build = args.build
     image_name = "cvrunner-local:latest"
 
     # Auto-build if needed
@@ -102,6 +122,7 @@ def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
     cmd = [
         "docker", "run", "--rm",
         "-w", "/workspace",
+        "-e", "WANDB_API_KEY", # pass through W&B API key
         image_name,  # Docker image name
         "-l",
         "--exp", exp_path
@@ -110,8 +131,12 @@ def run_in_docker(exp_path: str, extra_args: List[str], build: bool):
     logger.info(" ".join(cmd))
     subprocess.run(cmd, check=True)
 
-def build_and_push_image(image: str):
-    """Build and push image for Kubernetes using buildx."""
+def build_and_push_image(image: str) -> None:
+    """Build and push Docker image to registry.
+
+    Args:
+        image (str): image name with tag
+    """
     project_root = pathlib.Path(__file__).resolve().parent.parent
     logger.info(f"[CVRUNNER] Building and pushing Docker image {image}...")
 
@@ -124,9 +149,43 @@ def build_and_push_image(image: str):
         "--push"
     ], check=True)
 
-def run_on_k8s(image: str, exp_path: str):
-    # Always build + push latest image before creating job
-    build_and_push_image(image)
+def sync_wandb_secret()-> None:
+    """Create or update Kubernetes Secret for W&B API key."""
+    
+    api_key = os.environ.get("WANDB_API_KEY", "")
+    if not api_key:
+        raise RuntimeError("WANDB_API_KEY not set in local environment!")
+
+    # Build YAML manifest inline
+    secret_yaml = textwrap.dedent(f"""
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: wandb-secret
+    type: Opaque
+    stringData:
+      WANDB_API_KEY: "{api_key}"
+    """)
+
+    # Pipe YAML directly into kubectl apply
+    subprocess.run(
+        ["kubectl", "apply", "-f", "-"],
+        input=secret_yaml.encode("utf-8"),
+        check=True
+    )
+
+def run_on_k8s(args: Namespace) -> None:
+    """Run experiment on Kubernetes cluster.
+
+    Args:
+        args (Namespace): argurments for training job
+    """
+    image = args.image
+    exp_path = args.exp
+
+    if args.build:
+        # Always build + push latest image before creating job
+        build_and_push_image(image)
 
     env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments" / "k8s"
     template_file = env_dir / "job-template.yml"
@@ -139,6 +198,15 @@ def run_on_k8s(image: str, exp_path: str):
     job["spec"]["template"]["spec"]["containers"][0]["workingDir"] = "/workspace"
     job["spec"]["template"]["spec"]["containers"][0]["args"] = ["-l", "--exp", exp_path]
 
+    # Inject WANDB_API_KEY from secret
+    job["spec"]["template"]["spec"]["containers"][0].setdefault("envFrom", [])
+    job["spec"]["template"]["spec"]["containers"][0]["envFrom"].append({
+        "secretRef": {"name": "wandb-secret"}
+    })
+
+    # Sync or create secret
+    sync_wandb_secret()
+
     with tempfile.NamedTemporaryFile("w", suffix=".yml", delete=False) as f:
         yaml.dump(job, f)
         jobfile = f.name
@@ -149,9 +217,13 @@ def run_on_k8s(image: str, exp_path: str):
     logger.info("[CVRUNNER] Tail logs with:")
     logger.info("  kubectl logs -l job-name=$(kubectl get jobs -o jsonpath='{.items[-1:].metadata.name}') -f")
 
-# TODO: integrate with kubenetes
 # TODO: support distributed training
-def main():
+# TODO: support CUDA training
+# TODO: Sync job name with W&B run name
+def main() -> None:
+    """
+    Entry point for cvrunner CLI.
+    """
     parser = argparse.ArgumentParser(description="Run experiments with cvrunner.")
     parser.add_argument("-e", "--exp", type=str, required=True)
     parser.add_argument("-l", "--run-local", action="store_true", help="Run the experiment locally instead of inside Docker")
@@ -163,8 +235,6 @@ def main():
     if args.run_local:
         run_local(args)
     elif args.k8s:
-        run_on_k8s(args.image, args.exp)
+        run_on_k8s(args)
     else:
-        exp_path = args.exp
-        exp_args = []
-        run_in_docker(exp_path, exp_args, args.build)
+        run_in_docker(args)

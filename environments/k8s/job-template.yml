@@ -4,6 +4,7 @@ metadata:
   generateName: cvrunner-job-   # unique per run
 spec:
   backoffLimit: 0
+  ttlSecondsAfterFinished: 600   # clean up after 10 minutes
   template:
     spec:
       restartPolicy: Never
