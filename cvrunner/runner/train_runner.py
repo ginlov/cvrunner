@@ -1,6 +1,7 @@
 import torch
 
 from typing import Any
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 from cvrunner.experiment.experiment import BaseExperiment
 from cvrunner.runner.base_runner import BaseRunner
@@ -25,6 +26,7 @@ class TrainRunner(BaseRunner):
         """
         logger.info("START INITIALIZING TRAIN RUNNER")
         self.experiment = experiment
+        self._fix_seed(self.experiment.random_seed)
 
         # detect device
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -33,6 +35,7 @@ class TrainRunner(BaseRunner):
         logger.info(f"Building model")
         # build model
         self.model = self.experiment.build_model().to(self.device)
+        # self.model = DDP(self.model, device_ids=[torch.cuda.current_device()] if torch.cuda.is_available() else None)
         logger.info("Done building model")
         
         logger.info("Building loss function")

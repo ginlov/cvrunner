@@ -35,6 +35,16 @@ class BaseExperiment(ABC):
         pass
     
     @property
+    def random_seed(self) -> int:
+        """
+        Random seed for experiment
+
+        Returns:
+            int: Random seed
+        """
+        return 10
+    
+    @property
     def batch_size(self) -> int:
         """
         Returns:

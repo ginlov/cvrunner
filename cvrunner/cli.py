@@ -62,8 +62,7 @@ def run_local(args: Namespace) -> None:
     """Run experiment locally.
 
     Args:
-        args (Namespace): argurments for training job
-    """
+        args (Namespace): argurments for training job    """
     ExpClass = load_experiment_class(args.exp)
     exp: BaseExperiment = ExpClass()
 
@@ -220,8 +219,6 @@ def run_on_k8s(args: Namespace) -> None:
     logger.info("  kubectl logs -l job-name=$(kubectl get jobs -o jsonpath='{.items[-1:].metadata.name}') -f")
 
 # TODO: support distributed training
-# TODO: support CUDA training
-# TODO: Sync job name with W&B run name
 def main() -> None:
     """
     Entry point for cvrunner CLI.

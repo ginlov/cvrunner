@@ -1,3 +1,7 @@
+import random
+import numpy as np
+import torch
+
 from abc import ABC, abstractmethod
 from typing import Any, Type
 
@@ -21,7 +25,16 @@ class BaseRunner(ABC):
         Args:
             experiment (Type[BaseExperiment]): experiment to run
         """
-        self.experiment = experiment
+        pass
+
+    def _fix_seed(self, seed: int):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
     
     @abstractmethod
     def run(self):

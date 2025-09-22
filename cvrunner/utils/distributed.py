@@ -1,6 +1,27 @@
 import torch.distributed as dist
 import torch
 
+
+def is_available() -> bool:
+    """
+    Check if distributed is available
+
+    Returns:
+        bool:
+    """
+    return dist.is_available()
+
+
+def is_initialized() -> bool:
+    """
+    Check if distributed is initialized
+
+    Returns:
+        bool:
+    """
+    return dist.is_initialized()
+
+
 def is_dist_avail_and_initialized() -> bool:
     """
     Check distributed status
@@ -8,7 +29,7 @@ def is_dist_avail_and_initialized() -> bool:
     Returns:
         bool: 
     """
-    return dist.is_available() and dist.is_initialized()
+    return is_available() and is_initialized()
 
 
 def get_rank() -> int:
