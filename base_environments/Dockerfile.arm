@@ -18,6 +18,10 @@ RUN pip install torch==2.5.1
 # Copy project files
 COPY . ./cvrunner
 
+# Set deterministic env vars
+ENV CUBLAS_WORKSPACE_CONFIG=:4096:8
+ENV PYTHONHASHSEED=0
+
 # Install cvrunner
 RUN pip install -e ./cvrunner
 
