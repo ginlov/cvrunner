@@ -2,7 +2,7 @@
 FROM oel20/cvrunner-base-amd:latest
 
 # Copy dependency file first for caching
-COPY poetry.lock* requirements.txt* /workspace/
+COPY poetry.lock* requirements.txt* .
 
 # Install dependencies
 RUN pip install --no-cache-dir -U pip \

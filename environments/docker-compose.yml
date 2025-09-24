@@ -4,8 +4,6 @@ services:
       context: ..
       dockerfile: environments/Dockerfile
     image: cvrunner-local:latest
-    volumes:
-      - .:/workspace
     working_dir: /workspace
     environment:
       - WANDB_API_KEY=${WANDB_API_KEY}

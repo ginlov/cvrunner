@@ -99,9 +99,8 @@ def docker_image_exists(image: str) -> bool:
     )
     return result.stdout.strip() != ""
 
-def build_docker_image() -> None:
+def build_docker_image(env_dir) -> None:
     """Build docker image using docker-compose in environments/."""
-    env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
     logger.info(f"[CVRUNNER] Building docker image cvrunner-local from {env_dir}...")
     subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
 
@@ -116,15 +115,22 @@ def run_in_docker(args: Namespace) -> None:
     build = args.build
     image_name = "cvrunner-local:latest"
 
+    cwd_env_dir = pathlib.Path.cwd() / "environments"
+    if (cwd_env_dir / "docker-compose.yml").exists():
+        env_dir = cwd_env_dir
+    else:
+        # fallback to cvrunner's own environments
+        env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
+
     # Auto-build if needed
     if build or not docker_image_exists(image_name):
-        build_docker_image()
+        build_docker_image(env_dir)
 
     cmd = [
-        "docker", "run", "--rm",
-        "-w", "/workspace",
-        "-e", "WANDB_API_KEY", # pass through W&B API key
-        image_name,  # Docker image name
+        "docker-compose", 
+        "-f", str(env_dir / "docker-compose.yml"),
+        "run", "--rm",
+        "cvrunner",  # service name from docker-compose.yml
         "-l",
         "--exp", exp_path
     ] + extra_args
@@ -138,15 +144,22 @@ def build_and_push_image(image: str) -> None:
     Args:
         image (str): image name with tag
     """
-    project_root = pathlib.Path(__file__).resolve().parent.parent
-    logger.info(f"[CVRUNNER] Building and pushing Docker image {image}...")
+    cwd_env_dir = pathlib.Path.cwd() / "environments"
+    if (cwd_env_dir / "Dockerfile").exists():
+        dockerfile = cwd_env_dir / "Dockerfile"
+        context = pathlib.Path.cwd()
+    else:
+        project_root = pathlib.Path(__file__).resolve().parent.parent
+        dockerfile = project_root / "environments" / "Dockerfile"
+        context = project_root
 
+    logger.info(f"[CVRUNNER] Building and pushing Docker image {image} from {dockerfile}...")
     subprocess.run([
         "docker", "buildx", "build",
         "--platform", "linux/amd64",
         "-t", image,
-        "-f", str(project_root / "environments" / "Dockerfile"),
-        str(project_root),
+        "-f", str(dockerfile),
+        str(context),
         "--push"
     ], check=True)
 
