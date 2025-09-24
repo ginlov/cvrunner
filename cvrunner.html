@@ -60,7 +60,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.run_in_docker"><code class="docutils literal notranslate"><span class="pre">run_in_docker()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.run_local"><code class="docutils literal notranslate"><span class="pre">run_local()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.run_on_k8s"><code class="docutils literal notranslate"><span class="pre">run_on_k8s()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.sync_wandb_secret"><code class="docutils literal notranslate"><span class="pre">sync_wandb_secret()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.sync_env_secret"><code class="docutils literal notranslate"><span class="pre">sync_env_secret()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-cvrunner">Module contents</a></li>
@@ -145,7 +145,7 @@
 <span id="cvrunner-cli-module"></span><h2>cvrunner.cli module<a class="headerlink" href="#module-cvrunner.cli" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="cvrunner.cli.build_and_push_image">
-<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">build_and_push_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.build_and_push_image" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">build_and_push_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.build_and_push_image" title="Link to this definition"></a></dt>
 <dd><p>Build and push Docker image to registry.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -262,9 +262,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="cvrunner.cli.sync_wandb_secret">
-<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">sync_wandb_secret</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.sync_wandb_secret" title="Link to this definition"></a></dt>
-<dd><p>Create or update Kubernetes Secret for W&amp;B API key.</p>
+<dt class="sig sig-object py" id="cvrunner.cli.sync_env_secret">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">sync_env_secret</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.sync_env_secret" title="Link to this definition"></a></dt>
+<dd><p>Create or update Kubernetes Secret from all vars in .env file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
