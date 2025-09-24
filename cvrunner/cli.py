@@ -10,6 +10,7 @@ import textwrap
 
 from typing import Type, List
 from argparse import Namespace
+from dotenv import dotenv_values
 
 from cvrunner.runner.base_runner import BaseRunner
 from cvrunner.experiment.experiment import BaseExperiment
@@ -138,54 +139,44 @@ def run_in_docker(args: Namespace) -> None:
     logger.info(" ".join(cmd))
     subprocess.run(cmd, check=True)
 
-def build_and_push_image(image: str) -> None:
+def build_and_push_image(image: str, context: str) -> None:
     """Build and push Docker image to registry.
 
     Args:
         image (str): image name with tag
     """
-    cwd_env_dir = pathlib.Path.cwd() / "environments"
-    if (cwd_env_dir / "Dockerfile").exists():
-        dockerfile = cwd_env_dir / "Dockerfile"
-        context = pathlib.Path.cwd()
-    else:
-        project_root = pathlib.Path(__file__).resolve().parent.parent
-        dockerfile = project_root / "environments" / "Dockerfile"
-        context = project_root
+    env_dir = context / "environments"
+    build_docker_image(env_dir)
 
-    logger.info(f"[CVRUNNER] Building and pushing Docker image {image} from {dockerfile}...")
-    subprocess.run([
-        "docker", "buildx", "build",
-        "--platform", "linux/amd64",
-        "-t", image,
-        "-f", str(dockerfile),
-        str(context),
-        "--push"
-    ], check=True)
+    logger.info(f"[CVRUNNER] Tagging image cvrunner-local:latest as {image}...")
+    subprocess.run(["docker", "tag", "cvrunner-local:latest", image], check=True)
+    logger.info(f"[CVRUNNER] Pushing image {image} to registry...")
+    subprocess.run(["docker", "push", image], check=True)
 
-def sync_wandb_secret()-> None:
-    """Create or update Kubernetes Secret for W&B API key."""
-    
-    api_key = os.environ.get("WANDB_API_KEY", "")
-    if not api_key:
-        raise RuntimeError("WANDB_API_KEY not set in local environment!")
+def sync_env_secret(context: pathlib.Path) -> None:
+    """Create or update Kubernetes Secret from all vars in .env file."""
+    env_file = context / ".env"
 
-    # Build YAML manifest inline
-    secret_yaml = textwrap.dedent(f"""
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: wandb-secret
-    type: Opaque
-    stringData:
-      WANDB_API_KEY: "{api_key}"
-    """)
+    if not env_file.exists():
+        raise RuntimeError(f".env file not found at {env_file}")
 
-    # Pipe YAML directly into kubectl apply
+    env_vars = dotenv_values(env_file)
+    if not env_vars:
+        raise RuntimeError("No variables found in .env file")
+
+    # Build Secret YAML
+    secret_yaml = {
+        "apiVersion": "v1",
+        "kind": "Secret",
+        "metadata": {"name": "cvrunner-secrets"},
+        "type": "Opaque",
+        "stringData": {k: str(v) for k, v in env_vars.items() if v is not None},
+    }
+
     subprocess.run(
         ["kubectl", "apply", "-f", "-"],
-        input=secret_yaml.encode("utf-8"),
-        check=True
+        input=yaml.dump(secret_yaml).encode("utf-8"),
+        check=True,
     )
 
 def run_on_k8s(args: Namespace) -> None:
@@ -197,13 +188,22 @@ def run_on_k8s(args: Namespace) -> None:
     image = args.image
     exp_path = args.exp
 
+    # Get project root
+    cwd_env_dir = pathlib.Path.cwd()
+    if (cwd_env_dir / "environments" / "Dockerfile").exists():
+        context = pathlib.Path.cwd()
+    else:
+        project_root = pathlib.Path(__file__).resolve().parent.parent
+        context = project_root
+
     if args.build:
         # Always build + push latest image before creating job
-        build_and_push_image(image)
+        build_and_push_image(image, context)
 
-    env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments" / "k8s"
+    env_dir = context / "environments" / "k8s"
     template_file = env_dir / "job-template.yml"
-
+    
+    logger.info(f"[CVRUNNER] Using Kubernetes job template: {template_file}")
     with open(template_file) as f:
         job = yaml.safe_load(f)
 
@@ -215,11 +215,11 @@ def run_on_k8s(args: Namespace) -> None:
     # Inject WANDB_API_KEY from secret
     job["spec"]["template"]["spec"]["containers"][0].setdefault("envFrom", [])
     job["spec"]["template"]["spec"]["containers"][0]["envFrom"].append({
-        "secretRef": {"name": "wandb-secret"}
+        "secretRef": {"name": "cvrunner-secrets"}
     })
 
     # Sync or create secret
-    sync_wandb_secret()
+    sync_env_secret(context)
 
     with tempfile.NamedTemporaryFile("w", suffix=".yml", delete=False) as f:
         yaml.dump(job, f)

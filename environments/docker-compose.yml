@@ -5,7 +5,7 @@ services:
       dockerfile: environments/Dockerfile
     image: cvrunner-local:latest
     working_dir: /workspace
-    environment:
-      - WANDB_API_KEY=${WANDB_API_KEY}
+    env_file:
+      - ../.env
     stdin_open: true
     tty: true
