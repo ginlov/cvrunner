@@ -113,6 +113,10 @@ class TrainRunner(BaseRunner):
         for data in self.val_dataloader:
             self.val_step(data)
 
+    def train_epoch_start(self):
+        self.model.train()
+        super().train_epoch_start()
+        
     def train_step(self, data: Any):
         """
         Train step logic, basically call train_step function of experiment.
@@ -131,6 +135,10 @@ class TrainRunner(BaseRunner):
         logger.log_metrics(metrics, local_step=self.step)
         self.step += 1
 
+    def val_epoch_start(self):
+        self.model.eval()
+        super().val_epoch_start()
+
     def val_epoch_end(self):
         super().val_epoch_end()
 
@@ -145,11 +153,12 @@ class TrainRunner(BaseRunner):
         Args:
             data (Any): _description_
         """
-        metrics = self.experiment.val_step(
-            self.model,
-            data,
-            self.loss_function,
-            None,
-            self.device
-        )
-        self.valid_metrics.update(metrics)
+        with torch.no_grad():
+            metrics = self.experiment.val_step(
+                self.model,
+                data,
+                self.loss_function,
+                None,
+                self.device
+            )
+            self.valid_metrics.update(metrics)
