@@ -95,7 +95,7 @@ class CVLogger(logging.Logger):
             self,
             image_ids: List[int],
             images: List[Union[np.ndarray, Image.Image]],
-            time_step: int
+            local_step: int
     ):
         """
         Log images to W&B with image IDs and time step.
@@ -103,7 +103,7 @@ class CVLogger(logging.Logger):
         Args:
             image_ids (List[int]): Unique identifiers for each image.
             images (List[Union[np.ndarray, Image.Image]]): List of images.
-            time_step (int): The time/global step for logging.
+            local_step (int): The time/global step for logging.
         """
         if not self._wandb_enabled or wandb.run is None:
             self.warning("W&B not initialized. Skipping image logging.")
@@ -130,7 +130,7 @@ class CVLogger(logging.Logger):
                 self.warning(f"Failed to process image {img_id}: {e}")
 
         if wandb_images:
-            wandb.log({"images": wandb_images, "image_ids": image_ids}, step=time_step)
+            wandb.log({"images": wandb_images, "image_ids": image_ids}, step=local_step)
 
 # Singleton
 _logger = None
