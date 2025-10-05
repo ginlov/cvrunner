@@ -2,7 +2,10 @@ import logging
 import sys
 import os
 import wandb
+import numpy as np
+from typing import List, Union
 from datetime import datetime
+from PIL import Image
 
 import cvrunner.utils.distributed as dist
 
@@ -88,10 +91,49 @@ class CVLogger(logging.Logger):
         if self._wandb_enabled and wandb.run is not None:
             wandb.log(metrics, step=global_step)
 
+    def log_images(
+            self,
+            image_ids: List[int],
+            images: List[Union[np.ndarray, Image.Image]],
+            time_step: int
+    ):
+        """
+        Log images to W&B with image IDs and time step.
+
+        Args:
+            image_ids (List[int]): Unique identifiers for each image.
+            images (List[Union[np.ndarray, Image.Image]]): List of images.
+            time_step (int): The time/global step for logging.
+        """
+        if not self._wandb_enabled or wandb.run is None:
+            self.warning("W&B not initialized. Skipping image logging.")
+            return
+
+        if not (isinstance(image_ids, list) and isinstance(images, list)):
+            self.warning("image_ids and images must be lists.")
+            return
+
+        if len(image_ids) != len(images):
+            self.warning("Number of image_ids must match number of images.")
+            return
+
+        wandb_images = []
+        for img_id, img in zip(image_ids, images):
+            try:
+                if isinstance(img, np.ndarray):
+                    img = Image.fromarray(img)
+                elif isinstance(img, str):
+                    img = Image.open(img)
+                # Optionally, add more validation here
+                wandb_images.append(wandb.Image(img, caption=f"{img_id}"))
+            except Exception as e:
+                self.warning(f"Failed to process image {img_id}: {e}")
+
+        if wandb_images:
+            wandb.log({"images": wandb_images, "image_ids": image_ids}, step=time_step)
 
 # Singleton
 _logger = None
-
 
 def get_cv_logger(level=logging.INFO) -> CVLogger:
     """
