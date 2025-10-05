@@ -58,7 +58,7 @@ class TrainRunner(BaseRunner):
         self.step = 0
 
         # Initial validation metrics aggregator
-        self.valid_metrics = MultiMetricAggregator()
+        self.val_metrics = MultiMetricAggregator()
 
         logger.info("DONE INITIALIZING TRAIN RUNNER")
 
@@ -142,8 +142,8 @@ class TrainRunner(BaseRunner):
     def val_epoch_end(self):
         super().val_epoch_end()
 
-        logger.log_metrics(self.valid_metrics.summary(), local_step=self.step)
-        self.valid_metrics.reset()
+        logger.log_metrics(self.val_metrics.summary(), local_step=self.step)
+        self.val_metrics.reset()
     
     # TODO: Create MetricAggregator to aggregate validation metrics and logging
     def val_step(self, data: Any):
@@ -161,4 +161,5 @@ class TrainRunner(BaseRunner):
                 None,
                 self.device
             )
-            self.valid_metrics.update(metrics)
+            self.val_metrics.update(metrics)
+
