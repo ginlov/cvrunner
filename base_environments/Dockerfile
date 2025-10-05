@@ -38,8 +38,8 @@ FROM nvidia/cuda:12.1.0-runtime-ubuntu22.04 AS runtime
 # Install Python 3.10 (minimal, no build deps)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.10 python3.10-venv python3.10-distutils python3-pip \
-    libjpeg-dev libpng-dev && \
-    rm -rf /var/lib/apt/lists/*
+    libglib2.0-0 libsm6 libxext6 libxrender1 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Ensure python3 points to python3.10
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1
