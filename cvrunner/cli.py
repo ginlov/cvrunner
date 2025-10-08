@@ -20,6 +20,20 @@ from cvrunner.utils.logger import get_cv_logger
 sys.path.insert(0, str(pathlib.Path.cwd()))
 logger = get_cv_logger()
 
+def get_compose_cmd() -> List[str]:
+    """Get the docker compose command, either `docker-compose` or `docker compose`.
+    Raises:
+        RuntimeError: if neither command is found
+    Returns:
+        List[str]: command as list of strings
+    """
+    if subprocess.call(["which", "docker-compose"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL) == 0:
+        return ["docker-compose"]
+    try:
+        subprocess.run(["docker", "compose", "version"], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return ["docker", "compose"]
+    except subprocess.CalledProcessError:
+        raise RuntimeError("Docker Compose not found")
 def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
     """Load experiment class from experiment file
 
@@ -103,7 +117,7 @@ def docker_image_exists(image: str) -> bool:
 def build_docker_image(env_dir) -> None:
     """Build docker image using docker-compose in environments/."""
     logger.info(f"[CVRUNNER] Building docker image cvrunner-local from {env_dir}...")
-    subprocess.run(["docker-compose", "-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
+    subprocess.run(get_compose_cmd() + ["-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
 
 def run_in_docker(args: Namespace) -> None:
     """Run experiment inside Docker container.
@@ -127,8 +141,7 @@ def run_in_docker(args: Namespace) -> None:
     if build or not docker_image_exists(image_name):
         build_docker_image(env_dir)
 
-    cmd = [
-        "docker-compose", 
+    cmd = get_compose_cmd() + [ 
         "-f", str(env_dir / "docker-compose.yml"),
         "run", "--rm",
         "cvrunner",  # service name from docker-compose.yml
