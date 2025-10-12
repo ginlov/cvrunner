@@ -130,7 +130,12 @@ class CVLogger(logging.Logger):
                 self.warning(f"Failed to process image {img_id}: {e}")
 
         if wandb_images:
-            wandb.log({"images": wandb_images, "image_ids": image_ids}, step=local_step)
+            wandb.log({
+                "images": [
+                    wandb.Image(img, caption=str(img_id))
+                    for img, img_id in zip(wandb_images, image_ids)
+                ]
+            }, step=local_step)
 
 # Singleton
 _logger = None

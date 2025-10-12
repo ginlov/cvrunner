@@ -10,7 +10,7 @@ name = "cvrunner"
 version = "0.1.0"
 description = "A flexible experiment runner for computer vision projects"
 authors = [
-    { name = "Long-Giang Vu", email = "your_email@example.com" }
+    { name = "Long-Giang Vu", email = "giangvl.cs@gmail.com" }
 ]
 license = { text = "MIT" }
 readme = "README.md"
