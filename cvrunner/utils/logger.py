@@ -131,10 +131,7 @@ class CVLogger(logging.Logger):
 
         if wandb_images:
             wandb.log({
-                "images": [
-                    wandb.Image(img, caption=str(img_id))
-                    for img, img_id in zip(wandb_images, image_ids)
-                ]
+                str(img_id): wandb.Image(img) for img, img_id in zip(wandb_images, image_ids)
             }, step=local_step)
 
 # Singleton
