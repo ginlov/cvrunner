@@ -134,6 +134,26 @@ class CVLogger(logging.Logger):
                 str(img_id): wandb.Image(img) for img, img_id in zip(wandb_images, image_ids)
             }, step=local_step)
 
+    def log_histogram(self, name: str, values: np.ndarray, local_step: int):
+        """
+        Log a histogram of values to W&B.
+
+        Args:
+            name (str): Name of the histogram.
+            values (np.ndarray): Values to create the histogram from.
+            local_step (int): The time/global step for logging.
+        """
+        if not self._wandb_enabled or wandb.run is None:
+            self.warning("W&B not initialized. Skipping histogram logging.")
+            return
+
+        if not isinstance(values, np.ndarray):
+            self.warning("values must be a numpy array.")
+            return
+        
+        self.info(f"Logging histogram '{name}' at step {local_step} with {len(values)} values.")
+        wandb.log({name: wandb.Histogram(values)}, step=local_step)
+
 # Singleton
 _logger = None
 

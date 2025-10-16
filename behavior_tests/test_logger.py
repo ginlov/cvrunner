@@ -29,3 +29,6 @@ if __name__ == "__main__":
     for i in range(5):
         logger.log_images(image_ids=[i*5 + j for j in range(5)],
                 images=generate_dummy_images(), local_step=10)
+
+    logger.log_histogram("test_histogram", np.random.randn(1000), local_step=5)
+    logger.log_histogram("test_histogram", np.random.randn(1000), local_step=10)
