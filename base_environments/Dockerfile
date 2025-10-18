@@ -15,7 +15,7 @@ RUN python3 -m pip install --no-cache-dir -U pip setuptools wheel
 
 # Install PyTorch + deps (builder has them, will be copied later)
 RUN pip install --no-cache-dir \
-    torch==2.5.1+cu121 torchvision==0.20.1+cu121 torchaudio==2.5.1+cu121 \
+    torch==2.5.1+cu121 torchvision==0.20.1+cu121 \
     --extra-index-url https://download.pytorch.org/whl/cu121
 
 # Set deterministic env vars
