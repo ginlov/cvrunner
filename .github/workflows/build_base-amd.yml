@@ -38,7 +38,7 @@ jobs:
           sudo apt-get autoremove -y
           rm -rf ~/.cache
           rm -rf ~/.cache/pip
-          rm -rf /tmp/*
+          sudo rm -rf /tmp/*
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /opt/ghc
           sudo rm -rf /usr/local/lib/android
