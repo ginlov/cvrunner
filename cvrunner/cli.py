@@ -34,6 +34,7 @@ def get_compose_cmd() -> List[str]:
         return ["docker", "compose"]
     except subprocess.CalledProcessError:
         raise RuntimeError("Docker Compose not found")
+
 def load_experiment_class(exp_path: str) -> Type[BaseExperiment]:
     """Load experiment class from experiment file
 

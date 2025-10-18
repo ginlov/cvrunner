@@ -110,8 +110,9 @@ class TrainRunner(BaseRunner):
         """
         Validation epoch logic
         """
-        for data in self.val_dataloader:
-            self.val_step(data)
+        with torch.no_grad():
+            for data in self.val_dataloader:
+                self.val_step(data)
 
     def train_epoch_start(self):
         self.model.train()
@@ -153,13 +154,12 @@ class TrainRunner(BaseRunner):
         Args:
             data (Any): _description_
         """
-        with torch.no_grad():
-            metrics = self.experiment.val_step(
-                self.model,
-                data,
-                self.loss_function,
-                None,
-                self.device
-            )
-            self.val_metrics.update(metrics)
+        metrics = self.experiment.val_step(
+            self.model,
+            data,
+            self.loss_function,
+            None,
+            self.device
+        )
+        self.val_metrics.update(metrics)
 
