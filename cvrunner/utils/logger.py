@@ -69,7 +69,7 @@ class CVLogger(logging.Logger):
             except Exception as e:
                 self.warning(f"Failed to init W&B: {e}")
 
-    def log_metrics(self, metrics: dict, local_step: int):
+    def log_metrics(self, metrics: dict, local_step: int, is_loss_logging: bool = False):
         """
         Log metrics with global step aligned across all ranks.
         """
@@ -78,7 +78,7 @@ class CVLogger(logging.Logger):
         global_step = local_step * world_size + rank
 
         # Console (only rank 0)
-        if dist.is_main_process():
+        if dist.is_main_process() and is_loss_logging:
             msg = " | ".join(
                 [
                     f"{k}: {v:.4f}" if isinstance(v, (int, float)) else f"{k}: {v}"

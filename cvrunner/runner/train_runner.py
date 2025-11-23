@@ -133,7 +133,7 @@ class TrainRunner(BaseRunner):
             self.lr_scheduler,
             self.device
         )
-        logger.log_metrics(metrics, local_step=self.step)
+        logger.log_metrics(metrics, local_step=self.step, is_loss_logging=True)
         self.step += 1
 
     def val_epoch_start(self):
