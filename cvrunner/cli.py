@@ -212,6 +212,7 @@ def run_on_k8s(args: Namespace) -> None:
 
     if args.build:
         # Always build + push latest image before creating job
+        logger.info(f"[CVRUNNER] Building and pushing Docker image {image} with context {context}...")
         build_and_push_image(image, context)
 
     env_dir = context / "environments" / "k8s"
