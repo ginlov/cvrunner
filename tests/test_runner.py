@@ -61,6 +61,9 @@ class DummyExperiment(BaseExperiment):
     def build_loss_function(self):
         return nn.CrossEntropyLoss()
 
+    def build_criterion(self, *args, **kwargs):
+        return lambda x: None # No additional metrics for this dummy example
+
     def save_checkpoint(self):
         print("Checkpoint saved (dummy).")
 

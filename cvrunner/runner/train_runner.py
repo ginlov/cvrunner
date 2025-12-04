@@ -54,6 +54,11 @@ class TrainRunner(BaseRunner):
         self.optimizer, self.lr_scheduler = self.experiment.build_optimizer_scheduler(self.model)
         logger.info("Done building optimizer and learning rate scheduler")
 
+        logger.info("Building criterion")
+        # build metrics
+        self.criterion = self.experiment.build_criterion()
+        logger.info("Done building criterion")
+
         # Initial step for logging
         self.step = 0
 

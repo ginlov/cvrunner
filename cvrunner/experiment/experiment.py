@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import Any, Tuple, Union, Dict, Type, TYPE_CHECKING
+from typing import Any, Tuple, Union, Dict, Type, TYPE_CHECKING, Callable
 
 import torch
 
@@ -130,6 +130,16 @@ class BaseExperiment(ABC):
 
         Returns:
             Tuple[Optimizer, _LRScheduler]:
+        """
+        pass
+
+    @abstractmethod
+    def build_criterion(self, *args, **kwargs) -> Callable:
+        """
+        Criterion building logic
+
+        Returns:
+            Callable: callable criterion
         """
         pass
 
