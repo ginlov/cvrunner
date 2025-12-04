@@ -20,6 +20,14 @@ from cvrunner.utils.logger import get_cv_logger
 sys.path.insert(0, str(pathlib.Path.cwd()))
 logger = get_cv_logger()
 
+def get_properties(obj):
+    props = {}
+    for name in dir(obj):
+        attr = getattr(type(obj), name, None)
+        if isinstance(attr, property):
+            props[name] = getattr(obj, name)
+    return props
+
 def get_compose_cmd() -> List[str]:
     """Get the docker compose command, either `docker-compose` or `docker compose`.
     Raises:
@@ -89,7 +97,7 @@ def run_local(args: Namespace) -> None:
     wandb_runname = "-".join(job_name.split('-')[:-1]) if job_name else exp.wandb_runname  # fallback for local runs
 
     if wandb_project is not None:
-        logger.init_wandb(project=wandb_project, run_name=wandb_runname, config=vars(exp))
+        logger.init_wandb(project=wandb_project, run_name=wandb_runname, config=get_properties(exp))
 
     logger.info("Successfully initialized experiment.")
     logger.info("Start initializing runner")
