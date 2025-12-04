@@ -108,6 +108,20 @@ int: batch size</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_criterion">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_criterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_criterion" title="Link to this definition"></a></dt>
+<dd><p>Criterion building logic</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable criterion</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="cvrunner.experiment.experiment.BaseExperiment.build_dataloader">
 <em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">build_dataloader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.experiment.experiment.BaseExperiment.build_dataloader" title="Link to this definition"></a></dt>
 <dd><p>Dataloader building logic</p>
