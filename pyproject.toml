@@ -23,7 +23,8 @@ dependencies = [
     "dotenv==0.9.9",
     "pillow==11.3.0",
     "tqdm",
-    "wandb",
+    "wandb==0.22.2",
+    "pydantic==2.10.6"
 ]
 
 [project.urls]

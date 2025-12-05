@@ -2,6 +2,15 @@ import torch.distributed as dist
 import torch
 
 
+def get_global_step(local_step: int) -> int:
+    """
+    Compute global step from local step across all ranks.
+    """
+    rank = dist.get_rank()
+    world_size = dist.get_world_size()
+    global_step = local_step * world_size + rank
+    return global_step
+
 def is_available() -> bool:
     """
     Check if distributed is available

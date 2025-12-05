@@ -9,6 +9,13 @@ from PIL import Image
 
 import cvrunner.utils.distributed as dist
 
+class RankFilter(logging.Filter):
+    """
+    Logging filter to allow only rank 0 messages.
+    """
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.rank = dist.get_rank()
+        return True
 
 class CVLogger(logging.Logger):
     """
@@ -22,13 +29,14 @@ class CVLogger(logging.Logger):
         self.propagate = False
 
         # Console logging only once (on rank 0)
-        if not self.handlers and dist.is_main_process():
+        if not self.handlers:
             handler = logging.StreamHandler(sys.__stdout__)  # safe against pytest
             handler.setLevel(level)
             formatter = logging.Formatter(
-                "[%(asctime)s] [%(levelname)s] %(message)s",
+                "[%(asctime)s] [%(levelname)s] [rank %(rank)s] %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
             )
+            handler.addFilter(RankFilter())
             handler.setFormatter(formatter)
             self.addHandler(handler)
 
@@ -73,12 +81,10 @@ class CVLogger(logging.Logger):
         """
         Log metrics with global step aligned across all ranks.
         """
-        rank = dist.get_rank()
-        world_size = dist.get_world_size()
-        global_step = local_step * world_size + rank
+        global_step = dist.get_global_step(local_step)
 
         # Console (only rank 0)
-        if dist.is_main_process() and is_loss_logging:
+        if is_loss_logging:
             msg = " | ".join(
                 [
                     f"{k}: {v:.4f}" if isinstance(v, (int, float)) else f"{k}: {v}"
@@ -105,6 +111,8 @@ class CVLogger(logging.Logger):
             images (List[Union[np.ndarray, Image.Image]]): List of images.
             local_step (int): The time/global step for logging.
         """
+        global_step = dist.get_global_step(local_step)
+
         if not self._wandb_enabled or wandb.run is None:
             self.warning("W&B not initialized. Skipping image logging.")
             return
@@ -132,7 +140,7 @@ class CVLogger(logging.Logger):
         if wandb_images:
             wandb.log({
                 str(img_id): wandb.Image(img) for img, img_id in zip(wandb_images, image_ids)
-            }, step=local_step)
+            }, step=global_step)
 
     def log_histogram(self, name: str, values: np.ndarray, local_step: int):
         """
@@ -143,6 +151,7 @@ class CVLogger(logging.Logger):
             values (np.ndarray): Values to create the histogram from.
             local_step (int): The time/global step for logging.
         """
+        global_step = dist.get_global_step(local_step)
         if not self._wandb_enabled or wandb.run is None:
             self.warning("W&B not initialized. Skipping histogram logging.")
             return
@@ -152,7 +161,7 @@ class CVLogger(logging.Logger):
             return
         
         self.info(f"Logging histogram '{name}' at step {local_step} with {len(values)} values.")
-        wandb.log({name: wandb.Histogram(values)}, step=local_step)
+        wandb.log({name: wandb.Histogram(values)}, step=global_step)
 
 # Singleton
 _logger = None

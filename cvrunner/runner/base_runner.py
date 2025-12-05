@@ -19,12 +19,13 @@ class BaseRunner(ABC):
     @abstractmethod
     def __init__(
         self,
-        experiment: Type[BaseExperiment]
+        experiment: BaseExperiment
         ) -> None:
         """
         Args:
             experiment (Type[BaseExperiment]): experiment to run
         """
+        self.experiment = experiment
         pass
 
     def _fix_seed(self, seed: int):
