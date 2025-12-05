@@ -54,6 +54,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#module-cvrunner.cli">cvrunner.cli module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.build_and_push_image"><code class="docutils literal notranslate"><span class="pre">build_and_push_image()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.build_docker_image"><code class="docutils literal notranslate"><span class="pre">build_docker_image()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.distributed_local"><code class="docutils literal notranslate"><span class="pre">distributed_local()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.docker_image_exists"><code class="docutils literal notranslate"><span class="pre">docker_image_exists()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.get_compose_cmd"><code class="docutils literal notranslate"><span class="pre">get_compose_cmd()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#cvrunner.cli.get_properties"><code class="docutils literal notranslate"><span class="pre">get_properties()</span></code></a></li>
@@ -165,6 +166,16 @@
 <span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">build_docker_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.build_docker_image" title="Link to this definition"></a></dt>
 <dd><p>Build docker image using docker-compose in environments/.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cvrunner.cli.distributed_local">
+<span class="sig-prename descclassname"><span class="pre">cvrunner.cli.</span></span><span class="sig-name descname"><span class="pre">distributed_local</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runner_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#cvrunner.cli.distributed_local" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
