@@ -214,3 +214,6 @@ docs/build/
 
 # wandb folder
 wandb/
+
+# Data for test
+data/

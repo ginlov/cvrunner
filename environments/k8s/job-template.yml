@@ -20,10 +20,21 @@ spec:
                 fieldPath: metadata.name
         resources:
           requests:
-            nvidia.com/gpu: 1
+            nvidia.com/gpu: 2
             cpu: "2"
             memory: "4Gi"
           limits:
-            nvidia.com/gpu: 1
-            cpu: "4"
-            memory: "8Gi"
+            nvidia.com/gpu: 2
+            cpu: "2"
+            memory: "4Gi"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-GeForce-RTX-4090
+                - NVIDIA-GeForce-RTX-3090
+
