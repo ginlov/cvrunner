@@ -84,7 +84,6 @@ def build_docker_image(source_image, target_image, env_dir) -> None:
                 ],
                 check=True,
                 cwd=env_dir.parent,
-                capture_output=True,
                 text=True
             )
         except subprocess.CalledProcessError as e:
