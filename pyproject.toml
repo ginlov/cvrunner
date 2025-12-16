@@ -24,7 +24,8 @@ dependencies = [
     "pillow==11.3.0",
     "tqdm",
     "wandb==0.22.2",
-    "pydantic==2.10.6"
+    "pydantic==2.10.6",
+    "pytest-env==1.2.0"
 ]
 
 [project.urls]

@@ -138,7 +138,7 @@ class TrainRunner(BaseRunner):
             self.lr_scheduler,
             self.device
         )
-        logger.log_metrics(metrics, local_step=self.step, is_loss_logging=True)
+        logger.log_metrics(metrics, step=self.step)
         self.step += 1
 
     def val_epoch_start(self):
@@ -148,7 +148,7 @@ class TrainRunner(BaseRunner):
     def val_epoch_end(self):
         super().val_epoch_end()
 
-        logger.log_metrics(self.val_metrics.summary(), local_step=self.step, is_loss_logging=True)
+        logger.log_metrics(self.val_metrics.summary(), step=self.step)
         self.val_metrics.reset()
     
     # TODO: Create MetricAggregator to aggregate validation metrics and logging
@@ -163,7 +163,7 @@ class TrainRunner(BaseRunner):
             self.model,
             data,
             self.loss_function,
-            None,
+            self.criterion,
             self.device
         )
         self.val_metrics.update(metrics)

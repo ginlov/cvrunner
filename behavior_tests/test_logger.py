@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # This should log 25 images in total
     for i in range(5):
         logger.log_images(image_ids=[i*5 + j for j in range(5)],
-                images=generate_dummy_images(), local_step=0)
+                images=generate_dummy_images(), step=0)
 
     # This should log 25 images in total
     for i in range(5):

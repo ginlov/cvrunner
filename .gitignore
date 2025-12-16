@@ -214,3 +214,6 @@ docs/build/
 
 # wandb folder
 wandb/
+
+# Mnist data folder for testing
+data/

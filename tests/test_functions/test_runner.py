@@ -98,7 +98,7 @@ class DummyExperiment(BaseExperiment):
     def val_epoch_end(self):
         print("Validation epoch ended.")
 
-def test_runner_trains_one_epoch():
+def test_normal_runner_trains_one_epoch():
     exp = DummyExperiment()
     runner_cls = exp.runner_cls()
     wandb_project = exp.wandb_project

@@ -25,12 +25,12 @@ class BaseExperiment(ABC):
     Every experiments should be stateless.
     """
     @abstractmethod
-    def runner_cls(self) -> Type[BaseRunner]:
+    def runner_cls(self) -> BaseRunner:
         """
         Define type of runner to run this experiment
 
         Returns:
-            Type[BaseRunner]: runner class
+            BaseRunner: runner class
         """
         pass
     
