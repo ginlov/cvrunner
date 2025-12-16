@@ -1,5 +1,5 @@
 import torch
-import torch.distributed as dist
+from cvrunner.utils import distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data.distributed import DistributedSampler
 from cvrunner.runner.train_runner import TrainRunner
@@ -84,8 +84,9 @@ class DistributedTrainRunner(TrainRunner):
                 
                 # Checkpointing (Only Rank 0)
                 self.checkpoint()
+                logger.info(f"Checkpoint saved at epoch {epoch}.")
 
-            dist.barrier()
+            dist.barrier()  # Synchronize all ranks before next epoch
 
     def train_step(self, data):
         """
@@ -130,7 +131,7 @@ class DistributedTrainRunner(TrainRunner):
         logger.log_metrics(
             self.val_metrics.summary(), 
             step=self.step, 
-            average_across_ranks=True
+            average_across_ranks=False
         )
         self.val_metrics.reset()
 

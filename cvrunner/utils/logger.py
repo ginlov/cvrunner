@@ -3,10 +3,10 @@ import sys
 import os
 import wandb
 import numpy as np
-import torch
 from typing import List, Union
 from datetime import datetime
 from PIL import Image
+from cvrunner.utils.distributed import get_rank
 
 import cvrunner.utils.distributed as dist
 
@@ -15,20 +15,15 @@ class CVLogger(logging.Logger):
         super().__init__(name, level)
         self.propagate = False
 
-        # --- FIX: Only Rank 0 should log to console ---
-        if dist.is_main_process():
-            if not self.handlers:
-                handler = logging.StreamHandler(sys.__stdout__)
-                handler.setLevel(level)
-                formatter = logging.Formatter(
-                    "[%(asctime)s] [Rank 0] [%(levelname)s] %(message)s",
-                    datefmt="%Y-%m-%d %H:%M:%S",
-                )
-                handler.setFormatter(formatter)
-                self.addHandler(handler)
-        else:
-            # Non-master ranks get a NullHandler to suppress output
-            self.addHandler(logging.NullHandler())
+        if not self.handlers:
+            handler = logging.StreamHandler(sys.__stdout__)
+            handler.setLevel(level)
+            formatter = logging.Formatter(
+                f"[%(asctime)s] [%(levelname)s] %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+            )
+            handler.setFormatter(formatter)
+            self.addHandler(handler)
 
         self._wandb_enabled = False
         self._wandb_runname = None
@@ -112,12 +107,21 @@ class CVLogger(logging.Logger):
 # Singleton Pattern
 _logger = None
 
-def get_cv_logger(level=logging.INFO) -> CVLogger:
+def get_cv_logger(level=logging.INFO):
     global _logger
     if _logger is None:
+        rank = get_rank()
         logging.setLoggerClass(CVLogger)
-        _logger = logging.getLogger("cvrunner")
-        # Initialize if not already done
-        if not _logger.handlers:
-            _logger.__init__(level=level)
+        logger = logging.getLogger("cvrunner")
+        logger.setLevel(level)
+        _logger = logger
     return _logger
+
+def reconfigure_cv_logger():
+    """Call this after torch.distributed is initialized to update the logger's rank in the format."""
+    global _logger
+    if _logger is not None:
+        rank = get_rank()
+        for handler in _logger.handlers:
+            handler.setFormatter(logging.Formatter(f"[Rank {rank}] [%(levelname)s] %(message)s"))
+

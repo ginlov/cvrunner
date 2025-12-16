@@ -42,21 +42,6 @@ def cleanup_distributed():
 
 # --- Existing Helper Functions (Unchanged) ---
 
-def gather_obj(obj, dst=0):
-    """
-    Gather arbitrary Python objects from all ranks to the destination rank.
-    Returns a list of objects on dst rank, None on others.
-    """
-    if not is_dist_avail_and_initialized():
-        return [obj]
-        
-    world_size = dist.get_world_size()
-    gathered = [None for _ in range(world_size)]
-    dist.all_gather_object(gathered, obj)
-    if dist.get_rank() == dst:
-        return gathered
-    return None
-
 def get_global_step(local_step: int) -> int:
     """
     Compute global step from local step across all ranks.
@@ -94,13 +79,6 @@ def is_main_process() -> bool:
 def barrier() -> None:
     if is_dist_avail_and_initialized():
         dist.barrier()
-
-def all_reduce_tensor(tensor, op=dist.ReduceOp.SUM) -> torch.Tensor:
-    if not is_dist_avail_and_initialized():
-        return tensor
-    tensor = tensor.clone()
-    dist.all_reduce(tensor, op=op)
-    return tensor
 
 def reduce_dict(input_dict, average=True):
     """

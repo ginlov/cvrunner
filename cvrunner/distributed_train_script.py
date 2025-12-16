@@ -3,7 +3,7 @@ import importlib.util
 from cvrunner.experiment.experiment import BaseExperiment
 import pathlib
 from cvrunner.utils.distributed import setup_distributed, cleanup_distributed
-from cvrunner.utils.logger import get_cv_logger
+from cvrunner.utils.logger import get_cv_logger, reconfigure_cv_logger
 # Ignore warnings for cleaner output
 import warnings
 # Add current working directory to sys.path
@@ -15,7 +15,6 @@ logger = get_cv_logger()
 
 # --- ENTRY POINT ---
 if __name__ == "__main__":
-    
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiment_path", type=str, required=True)
     args = parser.parse_args()
@@ -46,6 +45,7 @@ if __name__ == "__main__":
     
     # 3. Initialize distributed and  W&B (Guarded by Rank 0 inside logger)
     _, __ = setup_distributed()
+    reconfigure_cv_logger()
     if experiment.wandb_project:
         # Assuming you have a helper to extract config properties
         logger.init_wandb(experiment.wandb_project, experiment.wandb_runname, config=vars(experiment))
