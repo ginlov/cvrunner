@@ -75,7 +75,7 @@ class DistributedTrainRunner(TrainRunner):
 
             dist.barrier()
             # Validation
-            if epoch % val_freq == 0 and is_main_process():
+            if (epoch % val_freq == 0 or epoch == num_epoch - 1) and is_main_process():
                 logger.info(f"Start validation at epoch {epoch}.")
                 self.val_epoch_start()
                 self.val_epoch()
