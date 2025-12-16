@@ -249,7 +249,12 @@ def main() -> None:
 
     if args.run_local:
         run_local(args)
-    elif args.k8s:
+
+    # Check whether user input target_image
+    if args.target_image == "cvrunner:latest":
+        raise ValueError("Please specify --target_image for Docker/K8s runs to avoid conflicts.")
+    
+    if args.k8s:
         run_on_k8s(args)
     else:
         run_in_docker(args)
