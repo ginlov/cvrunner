@@ -1,12 +1,14 @@
 import argparse
+import os
 import sys
 import pathlib
 import subprocess
-import os
 import tempfile
+import re
 import yaml
 import torch
 import warnings
+from pathlib import Path
 from dotenv import dotenv_values
 from argparse import Namespace
 
@@ -40,9 +42,54 @@ def docker_image_exists(image: str) -> bool:
     )
     return result.stdout.strip() != ""
 
-def build_docker_image(env_dir) -> None:
-    logger.info(f"[CVRUNNER] Building docker image cvrunner-local from {env_dir}...")
-    subprocess.run(get_compose_cmd() + ["-f", str(env_dir / "docker-compose.yml"), "build"], check=True)
+def build_docker_image(source_image, target_image, env_dir) -> None:
+    """Build Docker image using docker-compose with temporary override files."""
+    dockerfile_path = env_dir / "Dockerfile"
+    compose_path = env_dir / "docker-compose.yml"
+
+    # Prepare updated Dockerfile content
+    dockerfile_text = dockerfile_path.read_text()
+    dockerfile_text = re.sub(
+        r"^FROM\s+.*$", f"FROM {source_image}", dockerfile_text, flags=re.MULTILINE
+    )
+
+    # Prepare override docker-compose file content
+    override_compose = {
+        "services": {
+            "cvrunner": {
+                "image": target_image
+            }
+        }
+    }
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        tmp_dockerfile = tmpdir / "Dockerfile"
+        tmp_override_compose = tmpdir / "docker-compose.override.yml"
+
+        tmp_dockerfile.write_text(dockerfile_text)
+        with open(tmp_override_compose, "w") as f:
+            yaml.dump(override_compose, f)
+
+        logger.info(f"[CVRUNNER] Building docker image {target_image} from {env_dir} using override files...")
+
+        try:
+            subprocess.run(
+                get_compose_cmd() +
+                [
+                    "-f", str(compose_path),
+                    "-f", str(tmp_override_compose),
+                    "build",
+                    "--build-arg", f"DOCKERFILE={str(tmp_dockerfile)}"
+                ],
+                check=True,
+                cwd=env_dir.parent,
+                capture_output=True,
+                text=True
+            )
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Docker build failed:\nSTDOUT:\n{e.stdout}\nSTDERR:\n{e.stderr}")
+            raise
 
 # --- CORE LOGIC: Local Run ---
 
@@ -96,7 +143,7 @@ def run_in_docker(args: Namespace) -> None:
     """Run experiment inside Docker container."""
     exp_path = args.exp
     build = args.build
-    image_name = "cvrunner-local:latest"
+    image_name = args.target_image
 
     cwd_env_dir = pathlib.Path.cwd() / "environments"
     if (cwd_env_dir / "docker-compose.yml").exists():
@@ -106,7 +153,7 @@ def run_in_docker(args: Namespace) -> None:
         env_dir = pathlib.Path(__file__).resolve().parent.parent / "environments"
 
     if build or not docker_image_exists(image_name):
-        build_docker_image(env_dir)
+        build_docker_image(args.source_image, args.target_image, env_dir)
 
     # Note: We pass '-l' inside the container so the container runs 'run_local' (torchrun) internally
     cmd = get_compose_cmd() + [ 
@@ -122,12 +169,12 @@ def run_in_docker(args: Namespace) -> None:
 
 # --- K8S RUN ---
 
-def build_and_push_image(image: str, context: pathlib.Path) -> None:
+def build_and_push_image(source_image: str, target_image: str, context: pathlib.Path) -> None:
     env_dir = context / "environments"
-    build_docker_image(env_dir)
-    logger.info(f"[CVRUNNER] Tagging and Pushing {image}...")
-    subprocess.run(["docker", "tag", "cvrunner-local:latest", image], check=True)
-    subprocess.run(["docker", "push", image], check=True)
+    build_docker_image(source_image, target_image, env_dir)
+    logger.info(f"[CVRUNNER] Tagging and Pushing {target_image}...")
+    subprocess.run(["docker", "tag", f"{target_image}:latest", f"{os.environ.get('DOCKERHUB_USERNAME', 'oel20')}/{target_image}:latest"], check=True)
+    subprocess.run(["docker", "push", f"{os.environ.get('DOCKERHUB_USERNAME', 'oel20')}/{target_image}:latest"], check=True)
 
 def sync_env_secret(context: pathlib.Path) -> None:
     env_file = context / ".env"
@@ -146,7 +193,8 @@ def sync_env_secret(context: pathlib.Path) -> None:
 
 def run_on_k8s(args: Namespace) -> None:
     """Submit Job to K8s."""
-    image = args.image
+    source_image = args.source_image
+    target_image = args.target_image
     exp_path = args.exp
     
     # ... (Context resolution logic same as before) ...
@@ -157,7 +205,7 @@ def run_on_k8s(args: Namespace) -> None:
         context = pathlib.Path(__file__).resolve().parent.parent
 
     if args.build:
-        build_and_push_image(image, context)
+        build_and_push_image(source_image, target_image, context)
 
     env_dir = context / "environments" / "k8s"
     template_file = env_dir / "job-template.yml"
@@ -167,7 +215,7 @@ def run_on_k8s(args: Namespace) -> None:
 
     # Update Job Spec
     container = job["spec"]["template"]["spec"]["containers"][0]
-    container["image"] = image
+    container["image"] = f"{os.environ.get('DOCKERHUB_USERNAME', 'oel20')}/{target_image}:latest"
     container["workingDir"] = "/workspace"
     
     # CRITICAL: K8s args now also just trigger the local run inside the pod
@@ -195,7 +243,8 @@ def main() -> None:
     parser.add_argument("-l", "--run-local", action="store_true", help="Run locally")
     parser.add_argument("--build", action="store_true", help="Build Docker image")
     parser.add_argument("--k8s", action="store_true", help="Run on Kubernetes")
-    parser.add_argument("--image", type=str, default="oel20/cvrunner:latest")
+    parser.add_argument("--source_image", type=str, default="oel20/cvrunner:latest")
+    parser.add_argument("--target_image", type=str, default="cvrunner:latest")
     args = parser.parse_args()
 
     if args.run_local:
