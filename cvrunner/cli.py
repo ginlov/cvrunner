@@ -72,7 +72,7 @@ def run_local(args: Namespace) -> None:
         "--nproc_per_node", str(num_gpus if num_gpus > 0 else 1),
         "--rdzv_backend", "c10d",
         "--rdzv_endpoint", "localhost:0", # Let OS pick a random free port
-        "-m", "cvrunner.runner.distributed_train_runner", # <--- The script we wrote
+        "-m", "cvrunner.distributed_train_script", # <--- The script we wrote
         "--experiment_path", str(exp_path)
     ]
 

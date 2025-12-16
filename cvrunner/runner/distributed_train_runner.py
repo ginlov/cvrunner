@@ -1,22 +1,10 @@
-import sys
-import pathlib
 import torch
 import torch.distributed as dist
-import warnings
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data.distributed import DistributedSampler
-
-# Add project root to path for module execution
-sys.path.insert(0, str(pathlib.Path.cwd()))
-
 from cvrunner.runner.train_runner import TrainRunner
 from cvrunner.utils.logger import get_cv_logger
-from cvrunner.utils.distributed import setup_distributed, cleanup_distributed, is_main_process
-
-# Ignore warnings for cleaner output
-warnings.filterwarnings("ignore", module="pydantic")
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="wandb.analytics.sentry")
-
+from cvrunner.utils.distributed import is_main_process
 
 logger = get_cv_logger()
 
@@ -159,50 +147,4 @@ class DistributedTrainRunner(TrainRunner):
             return tuple(self._move_to_device(v) for v in data)
         return data
 
-# --- ENTRY POINT ---
-if __name__ == "__main__":
-    import argparse
-    import importlib.util
-    from cvrunner.experiment.experiment import BaseExperiment
-    
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_path", type=str, required=True)
-    args = parser.parse_args()
 
-    # 1. Load Experiment Class Dynamically
-    exp_path = pathlib.Path(args.experiment_path).resolve()
-    spec = importlib.util.spec_from_file_location("dynamic_exp", exp_path)
-    
-    # Assertion whether spec and loader are valid
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Cannot load experiment module from {exp_path}")
-
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    
-    ExperimentClass = None
-    for attr in dir(module):
-        obj = getattr(module, attr)
-        if isinstance(obj, type) and issubclass(obj, BaseExperiment) and obj is not BaseExperiment:
-            ExperimentClass = obj
-            break
-            
-    if not ExperimentClass:
-        raise RuntimeError("No BaseExperiment subclass found.")
-    
-    # 2. Instantiate Experiment
-    experiment = ExperimentClass()
-    
-    # 3. Initialize distributed and  W&B (Guarded by Rank 0 inside logger)
-    _, __ = setup_distributed()
-    if experiment.wandb_project:
-        # Assuming you have a helper to extract config properties
-        logger.init_wandb(experiment.wandb_project, experiment.wandb_runname, config=vars(experiment))
-
-    # 4. Run Distributed Training
-    runner_cls = experiment.runner_cls()
-    runner = runner_cls(experiment)
-    runner.run()
-    
-    # 5. Cleanup
-    cleanup_distributed()
