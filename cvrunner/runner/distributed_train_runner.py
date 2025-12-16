@@ -34,7 +34,8 @@ class DistributedTrainRunner(TrainRunner):
         # 1. Initialize Distributed Group & Get Local Rank
         # We do this *before* super().__init__ because we might need rank info,
         # but TrainRunner initializes components immediately.
-        self.local_rank, self.dist_device = setup_distributed()
+        self.local_rank = dist.get_rank()
+        self.dist_device = torch.device(f"cuda:{self.local_rank}")
         
         # 2. Initialize Parent (Builds model, optimizer, etc.)
         super().__init__(experiment)
@@ -192,7 +193,8 @@ if __name__ == "__main__":
     # 2. Instantiate Experiment
     experiment = ExperimentClass()
     
-    # 3. Initialize W&B (Guarded by Rank 0 inside logger)
+    # 3. Initialize distributed and  W&B (Guarded by Rank 0 inside logger)
+    _, __ = setup_distributed()
     if experiment.wandb_project:
         # Assuming you have a helper to extract config properties
         logger.init_wandb(experiment.wandb_project, experiment.wandb_runname, config=vars(experiment))
