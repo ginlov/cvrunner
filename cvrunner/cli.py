@@ -248,6 +248,7 @@ def main() -> None:
 
     if args.run_local:
         run_local(args)
+        return
 
     # Check whether user input target_image
     if args.target_image == "cvrunner:latest":
