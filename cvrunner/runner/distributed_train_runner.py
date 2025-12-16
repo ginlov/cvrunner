@@ -73,11 +73,9 @@ class DistributedTrainRunner(TrainRunner):
             
             logger.info(f"Done training epoch {epoch}")
 
+            dist.barrier()
             # Validation
-            if epoch % val_freq == 0:
-                # Barrier ensures all processes finish training before validation starts
-                dist.barrier()
-                
+            if epoch % val_freq == 0 and is_main_process():
                 logger.info(f"Start validation at epoch {epoch}.")
                 self.val_epoch_start()
                 self.val_epoch()
@@ -85,8 +83,9 @@ class DistributedTrainRunner(TrainRunner):
                 logger.info(f"Done validation at epoch {epoch}.")
                 
                 # Checkpointing (Only Rank 0)
-                if is_main_process():
-                    self.checkpoint()
+                self.checkpoint()
+
+            dist.barrier()
 
     def train_step(self, data):
         """
