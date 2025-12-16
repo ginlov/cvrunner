@@ -56,7 +56,7 @@ class CVLogger(logging.Logger):
         except Exception as e:
             self.warning(f"Failed to init W&B: {e}")
 
-    def log_metrics(self, metrics: dict, step: int, average_across_ranks=True):
+    def log_metrics(self, metrics: dict, step: int, average_across_ranks=False, stdout=True):
         """
         Log metrics (scalars).
         
@@ -76,9 +76,10 @@ class CVLogger(logging.Logger):
         
         # 2. Log only on Rank 0
         if dist.is_main_process():
-            # Console log
-            msg = " | ".join([f"{k}: {v:.4f}" for k, v in metrics.items()])
-            self.info(f"[Step {step}] {msg}")
+            if stdout:
+                # Console log
+                msg = " | ".join([f"{k}: {v:.4f}" for k, v in metrics.items()])
+                self.info(f"[Step {step}] {msg}")
 
             # W&B log
             if self._wandb_enabled:
