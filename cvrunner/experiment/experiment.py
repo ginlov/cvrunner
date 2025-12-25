@@ -121,7 +121,11 @@ class BaseExperiment(ABC):
         pass
 
     @abstractmethod
-    def build_optimizer_scheduler(self, model: torch.nn.Module) -> Tuple[Optimizer, _LRScheduler]:
+    def build_optimizer_scheduler(
+        self,
+        model: torch.nn.Module,
+        len_dataloader: int
+    ) -> Tuple[Optimizer, _LRScheduler]:
         """
         Optimizer and Learning scheduler building logic
 
