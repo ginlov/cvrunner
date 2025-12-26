@@ -3,6 +3,7 @@ import torch
 from typing import Any
 from torch.nn.parallel import DistributedDataParallel as DDP
 from tqdm import tqdm
+from time import time
 
 from cvrunner.experiment.experiment import BaseExperiment
 from cvrunner.runner.base_runner import BaseRunner
@@ -117,8 +118,11 @@ class TrainRunner(BaseRunner):
         Validation epoch logic
         """
         with torch.no_grad():
-            for data in tqdm(self.val_dataloader, desc="Validation"):
+            num_batches = len(self.val_dataloader)
+            for i, data in enumerate(self.val_dataloader):
+                start_time = time()
                 self.val_step(data)
+                logger.info(f"Validation step {i}/{num_batches}time: {time() - start_time:.4f} seconds")
 
     def train_epoch_start(self):
         self.model.train()
