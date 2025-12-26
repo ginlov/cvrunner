@@ -1,6 +1,7 @@
 import os
 import torch
 import torch.distributed as dist
+import datetime
 
 def setup_distributed():
     """
@@ -21,7 +22,8 @@ def setup_distributed():
                 backend="nccl", 
                 init_method="env://", 
                 world_size=world_size, 
-                rank=rank
+                rank=rank,
+                timeout=datetime.timedelta(seconds=3600)
             )
         
         # CRITICAL: Set the specific GPU for this process
