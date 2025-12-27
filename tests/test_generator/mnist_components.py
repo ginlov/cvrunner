@@ -109,7 +109,8 @@ class MnistExperiment(cvrunner.experiment.BaseExperiment):
 
     def build_optimizer_scheduler(
         self,
-        model: torch.nn.Module
+        model: torch.nn.Module,
+        len_dataloader: int
     ) -> tuple[torch.optim.Optimizer, torch.optim.lr_scheduler._LRScheduler]:
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)

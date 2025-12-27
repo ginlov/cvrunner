@@ -1,3 +1,5 @@
+import inspect
+
 class MetricAggregator:
     """
     A simple aggregator for collecting and summarizing metrics.
@@ -85,3 +87,11 @@ class MultiMetricAggregator:
             dict: {metric_name: average_value}
         """
         return {k: sum(v)/len(v) for k, v in self.data.items() if v}
+
+def get_properties(obj):
+    """Extract all property names and values from an object"""
+    properties = {}
+    for name, value in inspect.getmembers(type(obj)):
+        if isinstance(value, property):
+            properties[name] = getattr(obj, name)
+    return properties

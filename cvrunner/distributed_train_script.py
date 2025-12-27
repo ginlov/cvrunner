@@ -1,6 +1,7 @@
 import argparse
 import importlib.util
 from cvrunner.experiment.experiment import BaseExperiment
+from cvrunner.utils.utils import get_properties
 import pathlib
 from cvrunner.utils.distributed import setup_distributed, cleanup_distributed
 from cvrunner.utils.logger import get_cv_logger, reconfigure_cv_logger
@@ -48,7 +49,8 @@ if __name__ == "__main__":
     reconfigure_cv_logger()
     if experiment.wandb_project:
         # Assuming you have a helper to extract config properties
-        logger.init_wandb(experiment.wandb_project, experiment.wandb_runname, config=vars(experiment))
+        logger.info(f"Config: {vars(experiment)}")
+        logger.init_wandb(experiment.wandb_project, experiment.wandb_runname, config=get_properties(experiment))
 
     # 4. Run Distributed Training
     runner_cls = experiment.runner_cls()
