@@ -30,7 +30,7 @@ class BaseRunner(ABC):
 
     def _fix_seed(self, seed: int):
         torch.manual_seed(seed)
-        torch.use_deterministic_algorithms(True)
+        # torch.use_deterministic_algorithms(True)
         np.random.seed(seed)
         random.seed(seed)
         if torch.cuda.is_available():
