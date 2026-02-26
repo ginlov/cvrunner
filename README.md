@@ -1,5 +1,9 @@
 # CVRunner
 
+<p align="center">
+  <img src="docs/logo/cvrunner.png" alt="CVRunner Logo" width="200">
+</p>
+
 CVRunner simplifies and automates the setup for deep learning model training, making it easier to manage experiments, logging, and distributed training.
 
 ## Introduction
